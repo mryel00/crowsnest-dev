@@ -2,160 +2,72 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
-## [4.1.15](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.15) - 2025-07-27
-### Bug Fixes and Improvements
-
-- Fix libcamera device detection on bookworm ([#305](https://github.com/mainsail-crew/crowsnest/pull/305))
-
-### Other
-
-- Update git actions in release.yaml ([#307](https://github.com/mainsail-crew/crowsnest/pull/307))
-
-## [4.1.14](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.14) - 2025-06-25
-### Other
-
-- Remove rtsp options from crowsnest.conf example ([#304](https://github.com/mainsail-crew/crowsnest/pull/304))
-
-## [4.1.13](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.13) - 2025-05-27
-### Refactor
-
-- Refactor camera-streamer decision logic ([#300](https://github.com/mainsail-crew/crowsnest/pull/300))
-
-### Other
-
-- Remove custompios module ([#301](https://github.com/mainsail-crew/crowsnest/pull/301))
-- Update ustreamer to v6.36 ([#302](https://github.com/mainsail-crew/crowsnest/pull/302))
-
-## [4.1.12](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.12) - 2025-02-27
-### Bug Fixes and Improvements
-
-- Fix ustreamer dependencies ([#294](https://github.com/mainsail-crew/crowsnest/pull/294))
-
-## [4.1.11](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.11) - 2025-02-19
-### Bug Fixes and Improvements
-
-- Cs cannot be built on Armbian, so let's not depend on it ([#288](https://github.com/mainsail-crew/crowsnest/pull/288))
-
-### Documentation
-
-- Improve grammar and style, including capitalization and phrasing ([#285](https://github.com/mainsail-crew/crowsnest/pull/285))
-
-### Other
-
-- Update ustreamer to v6.31 ([#292](https://github.com/mainsail-crew/crowsnest/pull/292))
-
-## [4.1.10](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.10) - 2024-12-07
-### Bug Fixes and Improvements
-
-- Change cs branch temporarily to fix compiling error ([#280](https://github.com/mainsail-crew/crowsnest/pull/280))
-
-## [4.1.9](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.9) - 2024-04-26
-### Bug Fixes and Improvements
-
-- Fix libcamera resolution and controls logging ([#260](https://github.com/mainsail-crew/crowsnest/pull/260))
-
-## [4.1.8](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.8) - 2024-04-02
-### Bug Fixes and Improvements
-
-- Fix crash of detect_libcamera without CSI cam ([#256](https://github.com/mainsail-crew/crowsnest/pull/256))
-
-## [4.1.7](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.7) - 2024-04-02
+## [4.1.9](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.9) - 2025-08-15
 ### Features
 
+- Add dual picam detection ([#229](https://github.com/mainsail-crew/crowsnest/pull/229))
 - Log libamera device resolutions and controls ([#240](https://github.com/mainsail-crew/crowsnest/pull/240))
 
 ### Bug Fixes and Improvements
 
-- Fix empty string if ustreamer not found ([#253](https://github.com/mainsail-crew/crowsnest/pull/253))
-
-### Other
-
-- Revert #249 and update ustreamer version to v6.9 ([#254](https://github.com/mainsail-crew/crowsnest/pull/254))
-
-## [4.1.6](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.6) - 2024-03-03
-### Bug Fixes and Improvements
-
-- Change ustreamer repo to own fork as workaround for #247 ([#249](https://github.com/mainsail-crew/crowsnest/pull/249))
-
-## [4.1.5](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.5) - 2024-02-28
-### Bug Fixes and Improvements
-
-- Fix ustreamer binary path for v5.52 changes ([#245](https://github.com/mainsail-crew/crowsnest/pull/245))
-
-## [4.1.4](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.4) - 2024-02-17
-### Bug Fixes and Improvements
-
-- Support `no_proxy` mode with camera-streamer (bookworm) ([#238](https://github.com/mainsail-crew/crowsnest/pull/238))
-
-## [4.1.3](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.3) - 2024-01-16
-### Features
-
-- Add dual picam detection ([#229](https://github.com/mainsail-crew/crowsnest/pull/229))
-
-### Documentation
-
-- Fix buster hint link ([#236](https://github.com/mainsail-crew/crowsnest/pull/236))
-
-### Other
-
-- Fix `clean_apps` for installations without all backends ([#230](https://github.com/mainsail-crew/crowsnest/pull/230))
-- Remove `buildclean` from `make update` ([#231](https://github.com/mainsail-crew/crowsnest/pull/231))
-- Update issue bot to add github discussions ([#234](https://github.com/mainsail-crew/crowsnest/pull/234))
-- Add warning for libcamera on pi5 ([#235](https://github.com/mainsail-crew/crowsnest/pull/235))
-
-## [4.1.2](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.2) - 2024-01-08
-### Bug Fixes and Improvements
-
 - **build.sh**: Fix wrong cs branch for cloning ([#215](https://github.com/mainsail-crew/crowsnest/pull/215))
-- Fixes error in detect_legacy ([#217](https://github.com/mainsail-crew/crowsnest/pull/217))
-- Skip do_memory_split on bookworm ([#223](https://github.com/mainsail-crew/crowsnest/pull/223))
-- Fix crash with brokenfocus and camera-streamer ([#224](https://github.com/mainsail-crew/crowsnest/pull/224))
-- Add pi5 support ([#225](https://github.com/mainsail-crew/crowsnest/pull/225))
-
-### Other
-
-- Shallow clone camera-streamer submodules ([#226](https://github.com/mainsail-crew/crowsnest/pull/226))
-- Add note about proxies to crowsnest.conf ([#227](https://github.com/mainsail-crew/crowsnest/pull/227))
-
-## [4.1.1](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.1) - 2023-11-23
-### Documentation
-
-- Update supported devices ([#213](https://github.com/mainsail-crew/crowsnest/pull/213))
-
-### Other
-
-- Fix env file check ([#212](https://github.com/mainsail-crew/crowsnest/pull/212))
-- Add streamer repos update to make update ([#210](https://github.com/mainsail-crew/crowsnest/pull/210))
-- Add check to disable webcamd ([#211](https://github.com/mainsail-crew/crowsnest/pull/211))
-- Update copyright ([#214](https://github.com/mainsail-crew/crowsnest/pull/214))
-
-## [4.1.0](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.0) - 2023-11-15
-### Bug Fixes and Improvements
-
-- Revert #197 ([#207](https://github.com/mainsail-crew/crowsnest/pull/207))
-
-### Other
-
-- Refactor camera-streamer build conditions ([#201](https://github.com/mainsail-crew/crowsnest/pull/201))
-- Add startup workaround for SpeederPad ([#203](https://github.com/mainsail-crew/crowsnest/pull/203))
-- Add better dietpi support to installer ([#204](https://github.com/mainsail-crew/crowsnest/pull/204))
-- Add make argument to fix WorkingDirectory ([#205](https://github.com/mainsail-crew/crowsnest/pull/205))
-
-## [4.0.5](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.0.5) - 2023-11-03
-### Bug Fixes and Improvements
-
 - **camera-streamer.sh**: Force camera to be always active ([#197](https://github.com/mainsail-crew/crowsnest/pull/197))
 - **hwhandler.sh**: Fix error in device logging ([#169](https://github.com/mainsail-crew/crowsnest/pull/169))
 - Fix wrong gpumem calculation ([#176](https://github.com/mainsail-crew/crowsnest/pull/176))
 - Fix wrong syntax in gpumem ([#177](https://github.com/mainsail-crew/crowsnest/pull/177))
 - Fix wrong messages ([#183](https://github.com/mainsail-crew/crowsnest/pull/183))
 - Add bookworm support ([#195](https://github.com/mainsail-crew/crowsnest/pull/195))
+- Revert #197 ([#207](https://github.com/mainsail-crew/crowsnest/pull/207))
+- Fixes error in detect_legacy ([#217](https://github.com/mainsail-crew/crowsnest/pull/217))
+- Skip do_memory_split on bookworm ([#223](https://github.com/mainsail-crew/crowsnest/pull/223))
+- Fix crash with brokenfocus and camera-streamer ([#224](https://github.com/mainsail-crew/crowsnest/pull/224))
+- Add pi5 support ([#225](https://github.com/mainsail-crew/crowsnest/pull/225))
+- Support `no_proxy` mode with camera-streamer (bookworm) ([#238](https://github.com/mainsail-crew/crowsnest/pull/238))
+- Fix ustreamer binary path for v5.52 changes ([#245](https://github.com/mainsail-crew/crowsnest/pull/245))
+- Change ustreamer repo to own fork as workaround for #247 ([#249](https://github.com/mainsail-crew/crowsnest/pull/249))
+- Fix empty string if ustreamer not found ([#253](https://github.com/mainsail-crew/crowsnest/pull/253))
+- Fix crash of detect_libcamera without CSI cam ([#256](https://github.com/mainsail-crew/crowsnest/pull/256))
+- Fix libcamera resolution and controls logging ([#260](https://github.com/mainsail-crew/crowsnest/pull/260))
+- Change cs branch temporarily to fix compiling error ([#280](https://github.com/mainsail-crew/crowsnest/pull/280))
+- Cs cannot be built on Armbian, so let's not depend on it ([#288](https://github.com/mainsail-crew/crowsnest/pull/288))
+- Fix ustreamer dependencies ([#294](https://github.com/mainsail-crew/crowsnest/pull/294))
+- Fix libcamera device detection on bookworm ([#305](https://github.com/mainsail-crew/crowsnest/pull/305))
+
+### Refactor
+
+- Refactor camera-streamer decision logic ([#300](https://github.com/mainsail-crew/crowsnest/pull/300))
+
+### Documentation
+
+- Update supported devices ([#213](https://github.com/mainsail-crew/crowsnest/pull/213))
+- Fix buster hint link ([#236](https://github.com/mainsail-crew/crowsnest/pull/236))
+- Improve grammar and style, including capitalization and phrasing ([#285](https://github.com/mainsail-crew/crowsnest/pull/285))
 
 ### Other
 
 - Add release workflow ([#194](https://github.com/mainsail-crew/crowsnest/pull/194))
 - Add release workflow ([#194](https://github.com/mainsail-crew/crowsnest/pull/194))
 - Add shellcheck run for PRs to develop ([#198](https://github.com/mainsail-crew/crowsnest/pull/198))
+- Refactor camera-streamer build conditions ([#201](https://github.com/mainsail-crew/crowsnest/pull/201))
+- Add startup workaround for SpeederPad ([#203](https://github.com/mainsail-crew/crowsnest/pull/203))
+- Add better dietpi support to installer ([#204](https://github.com/mainsail-crew/crowsnest/pull/204))
+- Add make argument to fix WorkingDirectory ([#205](https://github.com/mainsail-crew/crowsnest/pull/205))
+- Fix env file check ([#212](https://github.com/mainsail-crew/crowsnest/pull/212))
+- Add streamer repos update to make update ([#210](https://github.com/mainsail-crew/crowsnest/pull/210))
+- Add check to disable webcamd ([#211](https://github.com/mainsail-crew/crowsnest/pull/211))
+- Update copyright ([#214](https://github.com/mainsail-crew/crowsnest/pull/214))
+- Shallow clone camera-streamer submodules ([#226](https://github.com/mainsail-crew/crowsnest/pull/226))
+- Add note about proxies to crowsnest.conf ([#227](https://github.com/mainsail-crew/crowsnest/pull/227))
+- Fix `clean_apps` for installations without all backends ([#230](https://github.com/mainsail-crew/crowsnest/pull/230))
+- Remove `buildclean` from `make update` ([#231](https://github.com/mainsail-crew/crowsnest/pull/231))
+- Update issue bot to add github discussions ([#234](https://github.com/mainsail-crew/crowsnest/pull/234))
+- Add warning for libcamera on pi5 ([#235](https://github.com/mainsail-crew/crowsnest/pull/235))
+- Revert #249 and update ustreamer version to v6.9 ([#254](https://github.com/mainsail-crew/crowsnest/pull/254))
+- Update ustreamer to v6.31 ([#292](https://github.com/mainsail-crew/crowsnest/pull/292))
+- Remove custompios module ([#301](https://github.com/mainsail-crew/crowsnest/pull/301))
+- Update ustreamer to v6.36 ([#302](https://github.com/mainsail-crew/crowsnest/pull/302))
+- Remove rtsp options from crowsnest.conf example ([#304](https://github.com/mainsail-crew/crowsnest/pull/304))
+- Update git actions in release.yaml ([#307](https://github.com/mainsail-crew/crowsnest/pull/307))
 
 ## [4.0.4](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.0.4) - 2023-09-01
 ### Bug Fixes and Improvements
@@ -431,5 +343,5 @@ All notable changes to Crowsnest will be documented in this file.
 
 - **update**: Removed message if RTSPtoWebRTC is not installed | [4170a25](https://github.com/mainsail-crew/crowsnest/commit/4170a25b640fe03ba1fe0c0c1c4451d693023092)
 
-## [0.0.0](https://github.com/mainsail-crew/crowsnest/releases/tag/v0.0.0) - 2021-10-27
+## [0.1.0](https://github.com/mainsail-crew/crowsnest/releases/tag/v0.1.0) - 2021-10-27
 
