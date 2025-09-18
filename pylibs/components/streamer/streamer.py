@@ -21,6 +21,8 @@ class Resolution():
 
 class Streamer(Section, ABC):
     section_name = 'cam'
+    binary_names = []
+    binary_paths = []
     binaries = {}
     missing_bin_txt = textwrap.dedent("""\
         '%s' executable not found!
@@ -31,7 +33,6 @@ class Streamer(Section, ABC):
     def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> bool:
         super().parse_config_section(config_section, *args, **kwargs)
         self.parameters.update({
-            'mode': config_section.get("mode", None),
             'port': config_section.getint("port", None),
             'device': config_section.get("device", None),
             'resolution': config_section.getresolution("resolution", None),
@@ -40,7 +41,7 @@ class Streamer(Section, ABC):
             'custom_flags': config_section.get("custom_flags", ''),
             'v4l2ctl': config_section.get("v4l2ctl", '')
         })
-        mode = self.parameters['mode']
+        mode = self.keyword
         if mode not in Streamer.binaries:
             Streamer.binaries[mode] = utils.get_executable(
                 self.binary_names,
