@@ -1,8 +1,9 @@
 #!/usr/bin/python3
 
 import textwrap
+import asyncio
 from configparser import SectionProxy
-from abc import ABC
+from abc import ABC, abstractmethod
 from os import listdir
 from os.path import isfile, join
 
@@ -23,6 +24,7 @@ class Streamer(Section, ABC):
     section_name = 'cam'
     binary_names = []
     binary_paths = []
+
     binaries = {}
     missing_bin_txt = textwrap.dedent("""\
         '%s' executable not found!
@@ -30,7 +32,7 @@ class Streamer(Section, ABC):
         Run 'make update' inside the crowsnest directory to install and update everything."""
     )
 
-    def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> bool:
+    def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> None:
         super().parse_config_section(config_section, *args, **kwargs)
         self.parameters.update({
             'port': config_section.getint("port", None),
@@ -49,14 +51,18 @@ class Streamer(Section, ABC):
             )
         self.binary_path = Streamer.binaries[mode]
 
-    def check_config_section(self, config_section):
+    def check_config_section(self, config_section) -> bool:
         success = super().check_config_section(config_section)
         if self.binary_path is None:
             logger.log_multiline(Streamer.missing_bin_txt % self.parameters['mode'], logger.log_error)
             success = False
         return success
 
-def load_all_streamers():
+    @abstractmethod
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
+        raise NotImplementedError("If you see this, something went wrong!!!")
+
+def load_all_streamers() -> None:
     streamer_path = 'pylibs/components/streamer'
     streamer_files = [
         f for f in listdir(streamer_path)
@@ -65,16 +71,19 @@ def load_all_streamers():
     for streamer_file in streamer_files:
         streamer_name = streamer_file[:-3]
         try:
-            binary_names, binary_paths = utils.load_streamer(
+            tup = utils.load_streamer(
                 streamer_name,
                 path=streamer_path.replace('/', '.')
             )
+            if tup is None:
+                continue
+            binary_names, binary_paths = tup
         except NotImplementedError:
             continue
         Streamer.binaries[streamer_name] = utils.get_executable(binary_names, binary_paths)
 
-def load_streamer():
+def load_streamer() -> tuple[list[str], list[str]]:
     raise NotImplementedError("If you see this, something went wrong!!!")
 
-def load_component(name: str, config_section: SectionProxy):
+def load_component(name: str, config_section: SectionProxy) -> Streamer:
     raise NotImplementedError("If you see this, something went wrong!!!")

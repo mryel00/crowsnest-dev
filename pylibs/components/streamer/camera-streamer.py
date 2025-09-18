@@ -12,14 +12,14 @@ class Camera_Streamer(Streamer):
     binary_names = ['camera-streamer']
     binary_paths = ['bin/camera-streamer']
 
-    def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> bool:
+    def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> None:
         super().parse_config_section(config_section, *args, **kwargs)
         self.parameters.update({
             'enable_rtsp': config_section.getboolean("enable_rtsp", False),
             'rtsp_port': config_section.getint("rtsp_port", 8554)
         })
 
-    async def execute(self, lock: asyncio.Lock):
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
         if self.parameters['no_proxy']:
             host = '0.0.0.0'
             logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
@@ -93,8 +93,8 @@ class Camera_Streamer(Streamer):
 
         return process
 
-def load_streamer():
+def load_streamer() -> tuple[list[str],list[str]]:
     return Camera_Streamer.binary_names, Camera_Streamer.binary_paths
 
-def load_component(name: str, config_section: SectionProxy):
+def load_component(name: str, config_section: SectionProxy) -> Camera_Streamer:
     return Camera_Streamer(name, config_section)

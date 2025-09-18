@@ -5,6 +5,7 @@ import asyncio
 
 from configparser import SectionProxy
 
+from pylibs.camera.types.uvc import UVC
 from .streamer import Streamer
 from ... import logger, utils, camera
 
@@ -13,7 +14,7 @@ class Ustreamer(Streamer):
     binary_names = ['ustreamer.bin', 'ustreamer']
     binary_paths = ['bin/ustreamer']
 
-    async def execute(self, lock: asyncio.Lock):
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
         if self.parameters['no_proxy']:
             host = '0.0.0.0'
             logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
@@ -23,7 +24,11 @@ class Ustreamer(Streamer):
         res = 'x'.join(self.parameters['resolution'])
         fps = self.parameters['max_fps']
         device = self.parameters['device']
-        self.cam = camera.camera_manager.get_cam_by_path(device)
+        cam = camera.camera_manager.get_cam_by_path(device)
+        if isinstance(cam, UVC):
+            self.cam = cam
+        else:
+            logger.log_error("Wrong camera type. Make sure the device path is correct and points to a camera supported by ustreamer!")
 
         streamer_args = [
             '--host', host,
@@ -31,7 +36,7 @@ class Ustreamer(Streamer):
             '--resolution', str(res),
             '--desired-fps', str(fps),
             # webroot & allow crossdomain requests
-            '--allow-origin', '\*',
+            '--allow-origin', '*',
             '--static', '"ustreamer-www"'
         ]
 
@@ -55,7 +60,7 @@ class Ustreamer(Streamer):
 
         v4l2ctl = self.parameters['v4l2ctl']
         if v4l2ctl:
-            self._set_v4l2_ctrls(self.cam, v4l2ctl.split(','))
+            self._set_v4l2_ctrls(v4l2ctl.split(','))
 
         # custom flags
         streamer_args += self.parameters['custom_flags'].split()
@@ -90,7 +95,7 @@ class Ustreamer(Streamer):
             msg = re.sub(r'-- (.*?) \[.*?\] --', r'\1', msg)
         logger.log_debug(msg)
 
-    def _set_v4l2_ctrl(self, ctrl: str, prefix='') -> str:
+    def _set_v4l2_ctrl(self, ctrl: str, prefix='') -> None:
         try:
             c = ctrl.split('=')[0].strip().lower()
             v = int(ctrl.split('=')[1].strip())
@@ -99,7 +104,7 @@ class Ustreamer(Streamer):
         except (ValueError, IndexError):
             logger.log_quiet(f"Failed to set parameter: '{ctrl.strip()}'", prefix)
 
-    def _set_v4l2_ctrls(self, ctrls: list[str] = None) -> str:
+    def _set_v4l2_ctrls(self, ctrls: list[str] | None = None) -> None:
         section = f'[cam {self.name}]'
         prefix = "V4L2 Control: "
         if not ctrls:
@@ -120,7 +125,7 @@ class Ustreamer(Streamer):
         # Repulls the string to print current values
         logger.log_multiline(self.cam.get_controls_string(), logger.log_debug, 'DEBUG: v4l2ctl: ')
 
-    def _brokenfocus(self, focus_absolute_conf: str) -> str:
+    def _brokenfocus(self, focus_absolute_conf: str) -> None:
         cur_val = self.cam.get_current_control_value('focus_absolute')
         if cur_val and cur_val != focus_absolute_conf:
             logger.log_warning(f"Detected 'brokenfocus' device.")
@@ -131,8 +136,8 @@ class Ustreamer(Streamer):
     def _is_device_legacy(self) -> bool:
         return isinstance(self.cam, camera.Legacy)
 
-def load_streamer():
+def load_streamer() -> tuple[list[str], list[str]]:
     return Ustreamer.binary_names, Ustreamer.binary_paths
 
-def load_component(name: str, config_section: SectionProxy):
+def load_component(name: str, config_section: SectionProxy) -> Ustreamer:
     return Ustreamer(name, config_section)

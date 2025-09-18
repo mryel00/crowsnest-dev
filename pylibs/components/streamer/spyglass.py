@@ -12,7 +12,7 @@ class Spyglass(Streamer):
     binary_names = ['run.py']
     binary_paths = ['bin/spyglass']
 
-    async def execute(self, lock: asyncio.Lock):
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
         if self.parameters['no_proxy']:
             host = '0.0.0.0'
             logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
@@ -62,8 +62,8 @@ class Spyglass(Streamer):
 
         return process
 
-def load_streamer():
+def load_streamer() -> tuple[list[str],list[str]]:
     return Spyglass.binary_names, Spyglass.binary_paths
 
-def load_component(name: str, config_section: SectionProxy):
+def load_component(name: str, config_section: SectionProxy) -> Spyglass:
     return Spyglass(name, config_section)

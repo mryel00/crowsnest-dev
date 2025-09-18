@@ -36,7 +36,7 @@ def initial_parse_config():
         logger.log_error("Failed to parse config! Exiting...")
         exit(1)
     crowsnest = None if not config.has_section('crowsnest') else Crowsnest(config['crowsnest'])
-    if not (crowsnest and crowsnest.initialized):
+    if crowsnest is None or not crowsnest.initialized:
         logger.log_error("Failed to parse config for '[crowsnest]' section! Exiting...")
         exit(1)
 
@@ -66,7 +66,7 @@ async def start_sections():
             section_name = ' '.join(section_header[1:])
             logger.log_quiet(f"Parse configuration of section [{section}] ...")
             component = utils.load_component(section_keyword, section_name, config[section])
-            if component.initialized:
+            if component is not None and component.initialized:
                 sect_objs.append(component)
                 logger.log_quiet(f"Configuration of section [{section}] looks good. Continue ...")
             else:
@@ -109,6 +109,10 @@ async def main():
     logging_helper.log_initial()
 
     initial_parse_config()
+
+    if crowsnest is None:
+        logger.log_error("Something went terribly wrong!")
+        exit(1)
 
     if crowsnest.parameters['delete_log']:
         logger.logger.handlers.clear()

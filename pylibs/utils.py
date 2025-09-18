@@ -7,28 +7,28 @@ import shutil
 import os
 
 from configparser import SectionProxy
-from typing import Optional
+from typing import Any, Callable, Optional
 
 from . import logger, v4l2
 
 # Dynamically import functions
 # Requires module to have a function with function_name
-def load_function(function_name: str, module_name: str, path='pylibs.components'):
+def load_function(function_name: str, module_name: str, path='pylibs.components')-> Callable[..., Any]:
     module = importlib.import_module(f'{path}.{module_name}')
     return getattr(module, function_name)
 
-def load_component(module_name: str, name: str, config_section: SectionProxy, path='pylibs.components'):
+def load_component(module_name: str, name: str, config_section: SectionProxy, path='pylibs.components') -> Any | None:
     try:
         return load_function('load_component', module_name, path)(name, config_section)
     except (ModuleNotFoundError, AttributeError) as e:
-        logger.log_error(f"Failed to load module '{module_name}' from '{path}'")
+        logger.log_error(f"Failed to load module '{module_name}' from '{path}' ({e.name})")
     return None
 
-def load_streamer(module_name: str, path='pylibs.components'):
+def load_streamer(module_name: str, path='pylibs.components') -> Any | None:
     try:
         return load_function('load_streamer', module_name, path)()
     except (ModuleNotFoundError, AttributeError) as e:
-        logger.log_error(f"Failed to load streamer '{module_name}' from '{path}'")
+        logger.log_error(f"Failed to load streamer '{module_name}' from '{path}' ({e.name})")
     return None
 
 async def log_subprocess_output(stream, log_func, line_prefix = ''):
@@ -111,7 +111,7 @@ def grep(path: str, search: str) -> str:
                 if search in line:
                     return line
     except FileNotFoundError:
-        logger.log_error(f"File '{path}' not found!")    
+        logger.log_error(f"File '{path}' not found!")
     return ''
 
 def log_level_converter(log_level: str) -> str:

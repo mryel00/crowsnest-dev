@@ -9,7 +9,7 @@ class Crowsnest(Section):
     def __init__(self, config_section: SectionProxy) -> None:
         super().__init__('crowsnest', config_section)
 
-    def parse_config_section(self, section: SectionProxy) -> bool:
+    def parse_config_section(self, section: SectionProxy) -> None:
         super().parse_config_section(section)
         self.parameters.update({
             'log_path': section.get('log_path', None),
@@ -18,8 +18,8 @@ class Crowsnest(Section):
             'no_proxy': section.getboolean('no_proxy', False)
         })
 
-    async def execute(self, lock: asyncio.Lock):
-        pass
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
+        raise NotImplementedError("If you see this, something went wrong!!!")
 
-def load_component(name: str, config_section: SectionProxy, *args, **kwargs):
+def load_component(name: str, config_section: SectionProxy) -> Crowsnest:
     return Crowsnest(config_section)
