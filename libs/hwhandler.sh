@@ -57,12 +57,31 @@ list_cam_v4l2ctrls() {
     done < <(v4l2-ctl -d "${device}" --list-ctrls-menus)
 }
 
+## Detect libcamera package
+libcamera_installed() {
+    if [[ -x "$(command -v libcamera-hello)" ]] ||
+    [[ -x "$(command -v rpicam-hello)" ]]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
+## List libcamera (CSI) device
+list_libcameras() {
+    if [[ -x "$(command -v libcamera-hello)" ]]; then
+        libcamera-hello --list-cameras
+    else
+        rpicam-hello --list-cameras
+    fi
+}
+
 ## Determine connected libcamera (CSI) device
 detect_libcamera() {
     local avail
     if [[ "$(is_raspberry_pi)" = "1" ]] &&
-    [[ -x "$(command -v libcamera-hello)" ]]; then
-        avail="$(libcamera-hello --list-cameras | grep -c "Available" || echo "0")"
+    [[ "$(libcamera_installed)" = "1" ]]; then
+        avail="$(list_libcameras | grep -c "Available" || echo "0")"
         if [[ "${avail}" = "1" ]]; then
             get_libcamera_path | wc -l
         else
@@ -73,13 +92,10 @@ detect_libcamera() {
     fi
 }
 
-## Spit /base/soc path for libcamera device
+## Split /base/soc path for libcamera device
 get_libcamera_path() {
-    if [[ "$(is_raspberry_pi)" = "1" ]] &&
-    [[ -x "$(command -v libcamera-hello)" ]]; then
-        libcamera-hello --list-cameras | sed '1,2d' \
-        | grep "\(/base/*\)" | cut -d"(" -f2 | tr -d '$)'
-    fi
+    list_libcameras | sed '1,2d' \
+    | grep "\(/base/*\)" | cut -d"(" -f2 | tr -d '$)'
 }
 
 # print libcamera resolutions
@@ -89,7 +105,7 @@ list_picam_resolution() {
     log_msg "'libcamera' device(s) resolution(s) :"
     while IFS= read -r i; do
         printf "%s\t\t%s\n" "${prefix}" "${i}" >> "${CROWSNEST_LOG_PATH}"
-    done < <(libcamera-hello --list-cameras | sed '1,2d;s/Modes:/Colorspace:/')
+    done < <(list_libcameras | sed '1,2d;s/Modes:/Colorspace:/')
 }
 
 get_libcamera_controls() {
@@ -158,38 +174,5 @@ detect_mjpeg() {
     v4l2-ctl -d "${dev}" --list-formats-ext | grep -c "Motion-JPEG, compressed"
 }
 
-## Check if device is raspberry sbc
-is_raspberry_pi() {
-    if [[ -f /proc/device-tree/model ]] &&
-    grep -q "Raspberry" /proc/device-tree/model; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-is_pi5() {
-    if [[ -f /proc/device-tree/model ]] &&
-    grep -q "Raspberry Pi 5" /proc/device-tree/model; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-is_ubuntu_arm() {
-    if [[ "$(is_raspberry_pi)" = "1" ]] &&
-    grep -q "ubuntu" /etc/os-release; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
-
-is_armbian() {
-    if grep -q "Armbian" /etc/os-release; then
-        echo "1"
-    else
-        echo "0"
-    fi
-}
+## Helper funcs
+. "${BASE_CN_PATH}/libs/helper_fn.sh"

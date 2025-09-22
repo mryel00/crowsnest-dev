@@ -2,6 +2,35 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
+## [4.1.16](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.16) - 2025-08-16
+### Bug Fixes and Improvements
+
+- Fix picam resolution logging on latest Bookworm ([#310](https://github.com/mainsail-crew/crowsnest/pull/310))
+
+## [4.1.15](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.15) - 2025-07-27
+### Bug Fixes and Improvements
+
+- Fix libcamera device detection on bookworm ([#305](https://github.com/mainsail-crew/crowsnest/pull/305))
+
+### Other
+
+- Update git actions in release.yaml ([#307](https://github.com/mainsail-crew/crowsnest/pull/307))
+
+## [4.1.14](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.14) - 2025-06-25
+### Other
+
+- Remove rtsp options from crowsnest.conf example ([#304](https://github.com/mainsail-crew/crowsnest/pull/304))
+
+## [4.1.13](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.13) - 2025-05-27
+### Refactor
+
+- Refactor camera-streamer decision logic ([#300](https://github.com/mainsail-crew/crowsnest/pull/300))
+
+### Other
+
+- Remove custompios module ([#301](https://github.com/mainsail-crew/crowsnest/pull/301))
+- Update ustreamer to v6.36 ([#302](https://github.com/mainsail-crew/crowsnest/pull/302))
+
 ## [4.1.12](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.12) - 2025-02-27
 ### Bug Fixes and Improvements
 
@@ -121,6 +150,7 @@ All notable changes to Crowsnest will be documented in this file.
 ### Bug Fixes and Improvements
 
 - **camera-streamer.sh**: Force camera to be always active ([#197](https://github.com/mainsail-crew/crowsnest/pull/197))
+- **hwhandler.sh**: Fix error in device logging ([#169](https://github.com/mainsail-crew/crowsnest/pull/169))
 - Fix wrong gpumem calculation ([#176](https://github.com/mainsail-crew/crowsnest/pull/176))
 - Fix wrong syntax in gpumem ([#177](https://github.com/mainsail-crew/crowsnest/pull/177))
 - Fix wrong messages ([#183](https://github.com/mainsail-crew/crowsnest/pull/183))
@@ -135,7 +165,6 @@ All notable changes to Crowsnest will be documented in this file.
 ## [4.0.4](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.0.4) - 2023-09-01
 ### Bug Fixes and Improvements
 
-- **hwhandler.sh**: Fix error in device logging ([#169](https://github.com/mainsail-crew/crowsnest/pull/169))
 - **hwhandler.sh**: Fix error in device logging ([#169](https://github.com/mainsail-crew/crowsnest/pull/169)) ([#170](https://github.com/mainsail-crew/crowsnest/pull/170))
 
 ## [4.0.3](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.0.3) - 2023-08-11
@@ -406,4 +435,6 @@ All notable changes to Crowsnest will be documented in this file.
 ### Other
 
 - **update**: Removed message if RTSPtoWebRTC is not installed | [4170a25](https://github.com/mainsail-crew/crowsnest/commit/4170a25b640fe03ba1fe0c0c1c4451d693023092)
+
+## [0.1.0](https://github.com/mainsail-crew/crowsnest/releases/tag/v0.1.0) - 2021-10-27
 
