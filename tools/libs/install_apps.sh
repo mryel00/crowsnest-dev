@@ -22,7 +22,6 @@ set -Ee
 . "${SRC_DIR}/libs/helper_fn.sh"
 
 install_apt_sources() {
-    curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
     local id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
     local version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
     local rpi=""
@@ -30,7 +29,14 @@ install_apt_sources() {
     if [[ "$(is_raspios)" = "1" || "$(is_dietpi)" = "1" ]]; then
         rpi="-rpi"
     fi
-    curl -s --compressed -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.list"
+
+    if [[ "$(id)" == "debian" ]] && [[ "$(version_id)" == "11" ]]; then
+        curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
+        curl -s --compressed -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.list"
+    else
+        curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
+        curl -s --compressed -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.sources"
+    fi
 }
 
 install_apt_streamer() {
