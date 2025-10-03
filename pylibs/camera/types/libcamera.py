@@ -66,13 +66,13 @@ class Libcamera(camera.Camera):
             str_second = f"min={min} max={max} default={default}"
             message += str_first + str_indent + str_second + '\n'
         return message.strip()
-    
+
     def get_type_str(self, obj) -> str:
         return str(type(obj)).split('\'')[1]
 
     @staticmethod
     def init_camera_type() -> list:
-        cmd = shutil.which('libcamera-hello')
+        cmd = shutil.which('rpicam-hello') or shutil.which('libcamera-hello')
         if not cmd:
             return {}
         libcam_cmd =f'{cmd} --list-cameras'

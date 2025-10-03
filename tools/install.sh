@@ -26,8 +26,8 @@ SRC_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 [[ -n "${CROWSNEST_UNATTENDED}" ]] || CROWSNEST_UNATTENDED="0"
 
 main() {
-    . "${SRC_DIR}/../libs/helper_fn.sh"
-    . "${SRC_DIR}/libs/build_apps.sh"
+    . "${SRC_DIR}/libs/helper_fn.sh"
+    . "${SRC_DIR}/libs/install_apps.sh"
     . "${SRC_DIR}/libs/config.sh"
     . "${SRC_DIR}/libs/core.sh"
     . "${SRC_DIR}/libs/interactive.sh"
@@ -59,7 +59,7 @@ main() {
 
     welcome_msg
 
-    msg "Running apt-get update first ...\n"
+    msg "Running apt-get update first ..."
     if run_apt_update; then
         status_msg "Running apt-get update first ..." "0"
     else
@@ -67,33 +67,12 @@ main() {
     fi
 
     if [[ "${CROWSNEST_UNATTENDED}" != "1" ]]; then
-        msg "Doing some tests ...\n"
         detect_existing_webcamd
-        if shallow_cs_dependencies_check; then
-            CN_INSTALL_CS="1"
-        else
-            CN_INSTALL_CS="0"
-        fi
-        status_msg "Doing some tests ..." "0"
-    else
-        if [[ "$(is_raspios)" = "1" ]]; then
-            CN_INSTALL_CS="1"
-        else
-            CN_INSTALL_CS="0"
-        fi
-    fi
-
-    if [[ "${CN_INSTALL_CS}" = "1" ]]; then
-        msg "Installing with camera-streamer ...\n"
-        link_pkglist_rpi
-    else
-        msg "Installing without camera-streamer ...\n"
-        link_pkglist_generic
     fi
 
     source_pkglist_file
     msg "Installing dependencies ...\n"
-    if install_dependencies ;then
+    if install_dependencies; then
         status_msg "Install dependencies ..." "0"
     else
         status_msg "Install dependencies ..." "1"
@@ -102,7 +81,7 @@ main() {
     import_config
 
     msg "Creating file structure ..."
-    if create_filestructure ;then
+    if create_filestructure; then
         status_msg "Creating file structure ..." "0"
     else
         status_msg "Creating file structure ..." "1"
@@ -127,18 +106,6 @@ main() {
         status_msg "Install environment file ..." "1"
     fi
 
-    if [[ "$(is_speederpad)" = "1" ]]; then
-        msg "\nSpeederpad detected!"
-        msg "Add startup delay to environment file ...\n"
-        add_sleep_to_crowsnest_env
-    fi
-
-    if install_logrotate_conf; then
-        status_msg "Install logrotate configuration ..." "0"
-    else
-        status_msg "Install logrotate configuration ..." "1"
-    fi
-
     if install_crowsnest_conf; then
         status_msg "Install crowsnest.conf ..." "0"
     else
@@ -153,13 +120,7 @@ main() {
 
     add_group_video
 
-    if [[ "$(is_bookworm)" = "1" ]] && [[ "${CN_INSTALL_CS}" = "1" ]]; then
-        msg "\nBookworm detected!"
-        msg "Using main branch of camera-streamer for Bookworm ...\n"
-        CROWSNEST_CAMERA_STREAMER_REPO_BRANCH="main"
-    fi
-
-    build_apps
+    install_apps
 
     if [[ "${CROWSNEST_UNATTENDED}" = "0" ]]; then
         set_gpu_mem
@@ -174,19 +135,12 @@ main() {
 
     if [[ "${CROWSNEST_UNATTENDED}" = "0" ]]; then
         ask_update_entry
-    fi
-
-    if [[ "${CROWSNEST_UNATTENDED}" = "1" ]] &&
-    [[ "${CROWSNEST_ADD_CROWSNEST_MOONRAKER}" = "1" ]]; then
-        add_update_entry
-    fi
-
-    if [[ "${CROWSNEST_UNATTENDED}" = "0" ]]; then
         goodbye_msg
         ask_reboot
-    fi
-
-    if [[ "${CROWSNEST_UNATTENDED}" = "1" ]]; then
+    elif [[ "${CROWSNEST_UNATTENDED}" = "1" ]]; then
+        if [[ "${CROWSNEST_ADD_CROWSNEST_MOONRAKER}" = "1" ]]; then
+            add_update_entry
+        fi
         unattended_success_msg
     fi
 
