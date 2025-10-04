@@ -58,13 +58,13 @@ install_runtime_dependencies() {
     pkg=()
     while IFS= read -r line; do
         # Only process lines that start with 8 spaces and a quote
-        if [[ "$line" =~ ^\ {8}\" ]]; then
-            dep=$(echo "$line" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
-            depname=$(echo "$dep" | sed 's/;.*//')
-            if ! echo "$dep" | grep -q "vendor == 'raspberry-pi'"; then
-                pkg+=("$depname")
+        if [[ "${line}" =~ ^\ {8}\" ]]; then
+            dep=$(echo "${line}" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
+            depname=$(echo "${dep}" | sed 's/;.*//')
+            if ! echo "${dep}" | grep -q "vendor == 'raspberry-pi'"; then
+                pkg+=("${depname}")
             elif [[ "$(is_raspios)" == "1" ]]; then
-                pkg+=("$depname")
+                pkg+=("${depname}")
             fi
         fi
     done < "${SRC_DIR}/system-dependencies.json"
