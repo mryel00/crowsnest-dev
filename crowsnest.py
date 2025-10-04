@@ -1,30 +1,31 @@
 #!/usr/bin/python3
 
 import argparse
-import configparser
 import asyncio
+import configparser
 import signal
 import traceback
 
+from pylibs import logger, logging_helper, utils, watchdog
 from pylibs.components.crowsnest import Crowsnest
-from pylibs import utils, watchdog, logger, logging_helper
 
 parser = argparse.ArgumentParser(
-    prog='Crowsnest',
-    description='Crowsnest - A webcam daemon for Raspberry Pi OS distributions like MainsailOS'
+    prog="Crowsnest",
+    description="Crowsnest - A webcam daemon for Raspberry Pi OS distributions like MainsailOS",
 )
 config = configparser.ConfigParser(
-    inline_comment_prefixes='#',
+    inline_comment_prefixes="#",
     converters={
-        'loglevel': utils.log_level_converter,
-        'resolution': utils.resolution_converter
-    }
+        "loglevel": utils.log_level_converter,
+        "resolution": utils.resolution_converter,
+    },
 )
 
-parser.add_argument('-c', '--config', help='Path to config file', required=True)
-parser.add_argument('-l', '--log_path', help='Path to log file', required=True)
+parser.add_argument("-c", "--config", help="Path to config file", required=True)
+parser.add_argument("-l", "--log_path", help="Path to log file", required=True)
 
 args = parser.parse_args()
+
 
 def initial_parse_config():
     global crowsnest, config, args
@@ -35,10 +36,13 @@ def initial_parse_config():
         logger.log_multiline(e.message, logger.log_error)
         logger.log_error("Failed to parse config! Exiting...")
         exit(1)
-    crowsnest = None if not config.has_section('crowsnest') else Crowsnest(config['crowsnest'])
+    crowsnest = (
+        None if not config.has_section("crowsnest") else Crowsnest(config["crowsnest"])
+    )
     if crowsnest is None or not crowsnest.initialized:
         logger.log_error("Failed to parse config for '[crowsnest]' section! Exiting...")
         exit(1)
+
 
 async def start_sections():
     global config, sect_exec_tasks
@@ -55,22 +59,28 @@ async def start_sections():
             return
         logger.log_quiet("Try to parse configured Cams / Services...")
         for section in config.sections():
-            section_header = section.split(' ')
+            section_header = section.split(" ")
             section_object = None
             section_keyword = section_header[0]
 
             # Skip crowsnest section
-            if section_keyword == 'crowsnest':
+            if section_keyword == "crowsnest":
                 continue
 
-            section_name = ' '.join(section_header[1:])
+            section_name = " ".join(section_header[1:])
             logger.log_quiet(f"Parse configuration of section [{section}] ...")
-            component = utils.load_component(section_keyword, section_name, config[section])
+            component = utils.load_component(
+                section_keyword, section_name, config[section]
+            )
             if component is not None and component.initialized:
                 sect_objs.append(component)
-                logger.log_quiet(f"Configuration of section [{section}] looks good. Continue ...")
+                logger.log_quiet(
+                    f"Configuration of section [{section}] looks good. Continue ..."
+                )
             else:
-                logger.log_error(f"Failed to parse config for section [{section}]! Skipping ...")
+                logger.log_error(
+                    f"Failed to parse config for section [{section}]! Skipping ..."
+                )
 
         logger.log_quiet("Try to start configured Cams / Services ...")
         if sect_objs:
@@ -100,8 +110,10 @@ async def start_sections():
         logger.log_quiet("Please come again :)")
         logger.log_quiet("Goodbye...")
 
+
 def exit_gracefully(signum, frame):
     pass
+
 
 async def main():
     global args, crowsnest
@@ -114,12 +126,12 @@ async def main():
         logger.log_error("Something went terribly wrong!")
         exit(1)
 
-    if crowsnest.parameters['delete_log']:
+    if crowsnest.parameters["delete_log"]:
         logger.logger.handlers.clear()
-        logger.setup_logging(args.log_path, 'w')
+        logger.setup_logging(args.log_path, "w")
         logging_helper.log_initial()
 
-    logger.set_log_level(crowsnest.parameters['log_level'])
+    logger.set_log_level(crowsnest.parameters["log_level"])
 
     logging_helper.log_host_info()
     logging_helper.log_streamer()
@@ -133,6 +145,7 @@ async def main():
     await task1
     if task2:
         task2.cancel()
+
 
 if __name__ == "__main__":
     loop = asyncio.get_event_loop()

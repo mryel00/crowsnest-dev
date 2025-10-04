@@ -2,6 +2,7 @@
 
 from . import logger
 
+
 class Parameter:
     def __init__(self, type=str, default=None) -> None:
         self.type = type
@@ -12,9 +13,9 @@ class Parameter:
             if value is None:
                 self.value = None
             elif self.type == bool:
-                if value.lower() == 'true':
+                if value.lower() == "true":
                     self.value = True
-                elif value.lower() == 'false':
+                elif value.lower() == "false":
                     self.value = False
                 else:
                     raise ValueError()

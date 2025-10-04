@@ -1,12 +1,13 @@
 #!/usr/bin/python3
 
-import os
 import copy
-
+import os
 from typing import Optional
-from . import raw, constants, utils
+
+from . import constants, raw, utils
 
 dev_ctls: dict[str, dict[str, dict[str, (raw.v4l2_ext_control, str)]]] = {}
+
 
 def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict:
     """
@@ -15,33 +16,41 @@ def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict:
     if qc.type == constants.V4L2_CTRL_TYPE_CTRL_CLASS:
         return {}
     controls = {}
-    controls['type'] = utils.v4l2_ctrl_type_to_string(qc.type)
+    controls["type"] = utils.v4l2_ctrl_type_to_string(qc.type)
     if qc.type in (constants.V4L2_CTRL_TYPE_INTEGER, constants.V4L2_CTRL_TYPE_MENU):
-        controls['min'] = qc.minimum
-        controls['max'] = qc.maximum
+        controls["min"] = qc.minimum
+        controls["max"] = qc.maximum
     if qc.type == constants.V4L2_CTRL_TYPE_INTEGER:
-        controls['step'] = qc.step
+        controls["step"] = qc.step
     if qc.type in (
         constants.V4L2_CTRL_TYPE_INTEGER,
         constants.V4L2_CTRL_TYPE_MENU,
         constants.V4L2_CTRL_TYPE_INTEGER_MENU,
-        constants.V4L2_CTRL_TYPE_BOOLEAN
+        constants.V4L2_CTRL_TYPE_BOOLEAN,
     ):
-        controls['default'] = qc.default_value
+        controls["default"] = qc.default_value
     if qc.flags:
-        controls['flags'] = utils.ctrlflags2str(qc.flags)
-    if qc.type in (constants.V4L2_CTRL_TYPE_MENU, constants.V4L2_CTRL_TYPE_INTEGER_MENU):
-        controls['menu'] = {}
+        controls["flags"] = utils.ctrlflags2str(qc.flags)
+    if qc.type in (
+        constants.V4L2_CTRL_TYPE_MENU,
+        constants.V4L2_CTRL_TYPE_INTEGER_MENU,
+    ):
+        controls["menu"] = {}
         for menu in utils.ioctl_iter(
             fd,
             raw.VIDIOC_QUERYMENU,
-            raw.v4l2_querymenu(id=qc.id), qc.minimum, qc.maximum + 1, qc.step, True
+            raw.v4l2_querymenu(id=qc.id),
+            qc.minimum,
+            qc.maximum + 1,
+            qc.step,
+            True,
         ):
             if qc.type == constants.V4L2_CTRL_TYPE_MENU:
-                controls['menu'][menu.index] = menu.name.decode()
+                controls["menu"][menu.index] = menu.name.decode()
             else:
-                controls['menu'][menu.index] = menu.value
+                controls["menu"][menu.index] = menu.value
     return controls
+
 
 def parse_qc_of_path(device_path: str, qc: raw.v4l2_query_ext_ctrl) -> dict:
     """
@@ -55,13 +64,16 @@ def parse_qc_of_path(device_path: str, qc: raw.v4l2_query_ext_ctrl) -> dict:
     except FileNotFoundError:
         return {}
 
+
 def init_device(device_path: str) -> bool:
     """
     Initialize a given device
     """
     try:
         fd = os.open(device_path, os.O_RDWR)
-        next_fl = constants.V4L2_CTRL_FLAG_NEXT_CTRL | constants.V4L2_CTRL_FLAG_NEXT_COMPOUND
+        next_fl = (
+            constants.V4L2_CTRL_FLAG_NEXT_CTRL | constants.V4L2_CTRL_FLAG_NEXT_COMPOUND
+        )
         qctrl = raw.v4l2_query_ext_ctrl(id=next_fl)
         dev_ctls[device_path] = {}
         for qc in utils.ioctl_iter(fd, raw.VIDIOC_QUERY_EXT_CTRL, qctrl):
@@ -70,8 +82,8 @@ def init_device(device_path: str) -> bool:
             else:
                 name = utils.name2var(qc.name.decode())
             dev_ctls[device_path][name] = {
-                'qc': copy.deepcopy(qc),
-                'values': parse_qc(fd, qc)
+                "qc": copy.deepcopy(qc),
+                "values": parse_qc(fd, qc),
             }
             qc.id |= next_fl
         os.close(fd)
@@ -79,13 +91,16 @@ def init_device(device_path: str) -> bool:
     except FileNotFoundError:
         return False
 
+
 def get_query_controls(device_path: str) -> dict[str, raw.v4l2_ext_control]:
     """
     Initialize a given device
     """
     try:
         fd = os.open(device_path, os.O_RDWR)
-        next_fl = constants.V4L2_CTRL_FLAG_NEXT_CTRL | constants.V4L2_CTRL_FLAG_NEXT_COMPOUND
+        next_fl = (
+            constants.V4L2_CTRL_FLAG_NEXT_CTRL | constants.V4L2_CTRL_FLAG_NEXT_COMPOUND
+        )
         qctrl = raw.v4l2_query_ext_ctrl(id=next_fl)
         query_controls: dict[str, raw.v4l2_query_ext_ctrl] = {}
         utils.ioctl_safe(fd, raw.VIDIOC_G_EXT_CTRLS, qctrl)
@@ -101,28 +116,32 @@ def get_query_controls(device_path: str) -> dict[str, raw.v4l2_ext_control]:
     except FileNotFoundError:
         return {}
 
+
 def get_dev_ctl(device_path: str) -> Optional[dict]:
     if device_path not in dev_ctls:
         if not init_device(device_path):
             return None
     return dev_ctls[device_path]
 
+
 def get_dev_ctl_parsed_dict(device_path: str) -> dict:
     if device_path not in dev_ctls:
         init_device(device_path)
     return utils.ctl_to_parsed_dict(dev_ctls[device_path])
 
+
 def get_dev_path_by_name(name: str) -> str:
     """
     Get the device path by its name
     """
-    prefix = 'video'
-    for dev in os.listdir('/dev'):
-        if dev.startswith(prefix) and dev[len(prefix):].isdigit():
-            path = f'/dev/{dev}'
-            if name in get_camera_capabilities(path).get('card'):
+    prefix = "video"
+    for dev in os.listdir("/dev"):
+        if dev.startswith(prefix) and dev[len(prefix) :].isdigit():
+            path = f"/dev/{dev}"
+            if name in get_camera_capabilities(path).get("card"):
                 return path
-    return ''
+    return ""
+
 
 def get_camera_capabilities(device_path: str) -> dict:
     """
@@ -133,25 +152,29 @@ def get_camera_capabilities(device_path: str) -> dict:
         cap = raw.v4l2_capability()
         utils.ioctl_safe(fd, raw.VIDIOC_QUERYCAP, cap)
         cap_dict = {
-            'driver': cap.driver.decode(),
-            'card': cap.card.decode(),
-            'bus': cap.bus_info.decode(),
-            'version': cap.version,
-            'capabilities': cap.capabilities
+            "driver": cap.driver.decode(),
+            "card": cap.card.decode(),
+            "bus": cap.bus_info.decode(),
+            "version": cap.version,
+            "capabilities": cap.capabilities,
         }
         os.close(fd)
         return cap_dict
     except FileNotFoundError:
         return {}
 
+
 def get_control_cur_value(device_path: str, control: str) -> int:
     """
     Get the current value of a control of a given device
     """
-    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][utils.name2var(control)]['qc']
+    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][utils.name2var(control)]["qc"]
     return get_control_cur_value_with_qc(device_path, qc, control)
 
-def get_control_cur_value_with_qc(device_path: str, qc: raw.v4l2_query_ext_ctrl) -> Optional[int]:
+
+def get_control_cur_value_with_qc(
+    device_path: str, qc: raw.v4l2_query_ext_ctrl
+) -> Optional[int]:
     """
     Get the current value of a control of a given device
     """
@@ -165,14 +188,18 @@ def get_control_cur_value_with_qc(device_path: str, qc: raw.v4l2_query_ext_ctrl)
     except FileNotFoundError:
         return None
 
+
 def set_control(device_path: str, control: str, value: int) -> bool:
     """
     Set the value of a control of a given device
     """
-    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][control]['qc']
+    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][control]["qc"]
     return set_control_with_qc(device_path, qc, value)
 
-def set_control_with_qc(device_path: str, qc: raw.v4l2_query_ext_ctrl, value: int) -> bool:
+
+def set_control_with_qc(
+    device_path: str, qc: raw.v4l2_query_ext_ctrl, value: int
+) -> bool:
     success = False
     try:
         fd = os.open(device_path, os.O_RDWR)
@@ -186,6 +213,7 @@ def set_control_with_qc(device_path: str, qc: raw.v4l2_query_ext_ctrl, value: in
     except FileNotFoundError:
         pass
     return success
+
 
 def get_formats(device_path: str) -> dict:
     """
@@ -203,7 +231,7 @@ def get_formats(device_path: str) -> dict:
             str = f"[{fmt.index}]: '{utils.fcc2s(fmt.pixelformat)}' ({fmt.description.decode()}"
             if fmt.flags:
                 str += f", {utils.fmtflags2str(fmt.flags)}"
-            str += ')'
+            str += ")"
             formats[str] = {}
             frmsize.pixel_format = fmt.pixelformat
             for size in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FRAMESIZES, frmsize):
@@ -212,7 +240,9 @@ def get_formats(device_path: str) -> dict:
                 frmival.pixel_format = fmt.pixelformat
                 frmival.width = frmsize.discrete.width
                 frmival.height = frmsize.discrete.height
-                for interval in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FRAMEINTERVALS, frmival):
+                for interval in utils.ioctl_iter(
+                    fd, raw.VIDIOC_ENUM_FRAMEINTERVALS, frmival
+                ):
                     formats[str][size_str].append(utils.frmival_to_str(interval))
         os.close(fd)
         return formats

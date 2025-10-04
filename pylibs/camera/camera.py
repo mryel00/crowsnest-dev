@@ -3,6 +3,7 @@
 import os
 from abc import ABC, abstractmethod
 
+
 class Camera(ABC):
     def __init__(self, path: str, *args, **kwargs) -> None:
         self.path = path

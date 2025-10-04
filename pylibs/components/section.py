@@ -1,16 +1,18 @@
 #!/usr/bin/python3
 
 import asyncio
-from configparser import SectionProxy
 from abc import ABC, abstractmethod
+from configparser import SectionProxy
 from typing import Any
 
 from .. import logger
 
+
 class Section(ABC):
-    section_name = 'section'
-    keyword = 'section'
+    section_name = "section"
+    keyword = "section"
     available_sections = {}
+
     # Section looks like this:
     # [<keyword> <name>]
     # param1: value1
@@ -25,21 +27,28 @@ class Section(ABC):
         success = True
         for option, value in config_section.items():
             if option not in self.parameters:
-                logger.log_warning(f"Parameter '{option}' is not supported by {self.keyword}!")
+                logger.log_warning(
+                    f"Parameter '{option}' is not supported by {self.keyword}!"
+                )
         for option, value in self.parameters.items():
             if value is None:
-                logger.log_error(f"Parameter '{option}' incorrectly set or missing in section "
-                                 f"[{self.section_name} {self.name}] but is required!")
+                logger.log_error(
+                    f"Parameter '{option}' incorrectly set or missing in section "
+                    f"[{self.section_name} {self.name}] but is required!"
+                )
                 success = False
         return success
 
     # Parse config according to the needs of the section
-    def parse_config_section(self, config_section: SectionProxy, *args, **kwargs) -> None:
+    def parse_config_section(
+        self, config_section: SectionProxy, *args, **kwargs
+    ) -> None:
         self.parameters: dict[str, Any] = {}
 
     @abstractmethod
     async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
         raise NotImplementedError("If you see this, something went wrong!!!")
+
 
 def load_component(*args, **kwargs) -> Section:
     raise NotImplementedError("If you see this, something went wrong!!!")
