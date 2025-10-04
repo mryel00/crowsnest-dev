@@ -120,7 +120,11 @@ main() {
 
     add_group_video
 
-    install_apps
+    if install_apps; then
+        status_msg "Setup streamer apps ..." "0"
+    else
+        status_msg "Setup streamer apps ..." "1"
+    fi
 
     if [[ "${CROWSNEST_UNATTENDED}" = "0" ]]; then
         set_gpu_mem
