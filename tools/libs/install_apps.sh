@@ -22,21 +22,23 @@ set -Ee
 . "${SRC_DIR}/libs/helper_fn.sh"
 
 install_apt_sources() {
-    local id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
-    local version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
-    local rpi=""
+    local id version_id rpi
+
+    id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
+    version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
+    rpi=""
 
     if [[ "$(is_raspios)" = "1" || "$(is_dietpi)" = "1" ]]; then
         rpi="-rpi"
+        id="debian"
     fi
 
-    if [[ "$(id)" = "debian" ]] && [[ "$(version_id)" = "11" ]]; then
+    if [[ "${id}" = "debian" ]] && [[ "${version_id}" = "11" ]]; then
         curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
-        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.list"
+        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-${id}-${version_id}${rpi}.list"
         echo "1"
     else
-        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.sources"
-        if [[ $? -eq 0 ]]; then
+        if curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-${id}-${version_id}${rpi}.sources"; then
             curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
             echo "1"
         else
@@ -63,10 +65,10 @@ install_apt_streamer() {
 
     apps=("mainsail-ustreamer" "mainsail-spyglass" "mainsail-camera-streamer")
     for pkg in "${apps[@]}"; do
-        if apt-get --yes --no-install-recommends install "$pkg"; then
-            echo "$pkg installed successfully."
+        if apt-get --yes --no-install-recommends install "${pkg}"; then
+            echo "${pkg} installed successfully."
         else
-            echo "$pkg not found or failed to install."
+            echo "${pkg} not found or failed to install."
         fi
     done
 }
