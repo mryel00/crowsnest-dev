@@ -30,12 +30,18 @@ install_apt_sources() {
         rpi="-rpi"
     fi
 
-    if [[ "$(id)" == "debian" ]] && [[ "$(version_id)" == "11" ]]; then
+    if [[ "$(id)" = "debian" ]] && [[ "$(version_id)" = "11" ]]; then
         curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
-        curl -s --compressed -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.list"
+        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.list"
+        echo "1"
     else
-        curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
-        curl -s --compressed -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.sources"
+        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-$id-$version_id$rpi.sources"
+        if [[ $? -eq 0 ]]; then
+            curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
+            echo "1"
+        else
+            echo "0"
+        fi
     fi
 }
 
@@ -70,8 +76,12 @@ install_apps() {
     python3 -m venv --system-site-packages "${SRC_DIR}/../.venv"
 
     msg "Setup Mainsail apt repository ..."
-    install_apt_sources
-    msg "Install streamer apps ..."
-    install_apt_streamer
-    msg "Note: camera-streamer and spyglass are supposed to fail on non Raspberry Pi systems"
+    if [[ "$(install_apt_sources)" = "0" ]]; then
+        msg "We do not support your Distro with the Mainsail apt repository."
+        msg "Trying to install ustreamer manually."
+    else
+        msg "Install streamer apps ..."
+        install_apt_streamer
+        msg "Note: camera-streamer and spyglass are supposed to fail on non Raspberry Pi OS systems"
+    fi
 }
