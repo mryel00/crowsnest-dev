@@ -60,7 +60,7 @@ install_runtime_dependencies() {
         # Only process lines that start with 8 spaces and a quote
         if [[ "${line}" =~ ^\ {8}\" ]]; then
             dep=$(echo "${line}" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
-            depname=$(echo "${dep}" | sed 's/;.*//')
+            depname="${dep%%;*}"
             if ! echo "${dep}" | grep -q "vendor == 'raspberry-pi'"; then
                 pkg+=("${depname}")
             elif [[ "$(is_raspios)" == "1" ]]; then
