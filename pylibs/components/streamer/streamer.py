@@ -43,6 +43,7 @@ class Streamer(Section, ABC):
         super().parse_config_section(config_section, *args, **kwargs)
         self.parameters.update(
             {
+                "mode": self.keyword,
                 "port": config_section.getint("port", None),
                 "device": config_section.get("device", None),
                 "resolution": config_section.getresolution("resolution", None),
