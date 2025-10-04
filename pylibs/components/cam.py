@@ -30,7 +30,7 @@ class Cam(Section):
         self.streamer: Streamer = component
 
     def check_config_section(self, config_section: SectionProxy) -> bool:
-        return bool(self.streamer)
+        return self.streamer.initialized
 
     async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
         if self.streamer is None:
