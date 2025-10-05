@@ -21,6 +21,52 @@ set -Ee
 
 . "${SRC_DIR}/libs/helper_fn.sh"
 
+# Ustreamer repo
+if [[ -z "${CROWSNEST_USTREAMER_REPO_SHIP}" ]]; then
+    CROWSNEST_USTREAMER_REPO_SHIP="https://github.com/pikvm/ustreamer.git"
+fi
+if [[ -z "${CROWSNEST_USTREAMER_REPO_BRANCH}" ]]; then
+    CROWSNEST_USTREAMER_REPO_BRANCH="master"
+fi
+USTREAMER_PATH="bin/ustreamer"
+
+clone_ustreamer() {
+    ## remove bin/ustreamer if exist
+    if [[ -d bin/ustreamer ]]; then
+        rm -rf bin/ustreamer
+    fi
+    sudo -u "${BASE_USER}" \
+    git clone "${CROWSNEST_USTREAMER_REPO_SHIP}" \
+    -b "${CROWSNEST_USTREAMER_REPO_BRANCH}" \
+    --depth=1 --single-branch "${USTREAMER_PATH}"
+}
+
+get_avail_mem() {
+    grep "MemTotal" /proc/meminfo | awk '{print $2}'
+}
+
+build_ustreamer() {
+    local path
+    ## Determine Ramsize and export MAKEFLAG
+    if [[ "$(get_avail_mem)" -le 524288 ]]; then
+        USE_PROCS=-j1
+    elif [[ "$(get_avail_mem)" -le 1048576 ]]; then
+        USE_PROCS=-j2
+    else
+        USE_PROCS=-j4
+    fi
+
+    if [[ ! -d "${USTREAMER_PATH}" ]]; then
+        msg "'${USTREAMER_PATH}' does not exist! Build skipped ... [WARN]\n"
+    else
+        msg "Build '${USTREAMER_PATH##*/}' using ${USE_PROCS##-j} Cores ... \n"
+        pushd "${USTREAMER_PATH}" &> /dev/null || exit 1
+        make "${USE_PROCS}"
+        popd &> /dev/null || exit 1
+        msg "Build '${USTREAMER_PATH##*/}' ... [SUCCESS]\n"
+    fi
+}
+
 install_apt_sources() {
     local id version_id rpi
 
@@ -49,13 +95,6 @@ install_apt_sources() {
 
 install_apt_streamer() {
     local -a apps
-    msg "Installing Mainsail apt repository ..."
-    if install_apt_sources; then
-        status_msg "Installing Mainsail apt repository ..." "0"
-    else
-        status_msg "Installing Mainsail apt repository ..." "1"
-    fi
-
     msg "Running apt-get update again ..."
     if run_apt_update; then
         status_msg "Running apt-get update again ..." "0"
@@ -81,6 +120,9 @@ install_apps() {
     if [[ "$(install_apt_sources)" = "0" ]]; then
         msg "We do not support your Distro with the Mainsail apt repository."
         msg "Trying to install ustreamer manually."
+        msg "Cloning ustreamer repository ..."
+        clone_ustreamer
+        build_ustreamer
     else
         msg "Install streamer apps ..."
         install_apt_streamer
