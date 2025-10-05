@@ -19,4 +19,4 @@ set -Ee
 
 ### Crowsnest Dependencies
 # shellcheck disable=SC2034
-PKGLIST="git crudini curl python3 python3-venv"
+PKGLIST="curl python3 python3-venv"
