@@ -46,7 +46,6 @@ get_avail_mem() {
 }
 
 build_ustreamer() {
-    local path
     ## Determine Ramsize and export MAKEFLAG
     if [[ "$(get_avail_mem)" -le 524288 ]]; then
         USE_PROCS=-j1
