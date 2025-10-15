@@ -15,7 +15,7 @@ class Ustreamer(Streamer):
     binary_names = ["ustreamer.bin", "ustreamer"]
     binary_paths = ["bin/ustreamer"]
 
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
         if self.parameters["no_proxy"]:
             host = "0.0.0.0"
             logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
@@ -30,6 +30,7 @@ class Ustreamer(Streamer):
             logger.log_warning(
                 "Wrong camera type or device not found. Make sure the device path is correct and points to a camera supported by ustreamer!"
             )
+            return None
 
         streamer_args = [
             "--host",
@@ -59,7 +60,7 @@ class Ustreamer(Streamer):
             self._blockyfix()
         else:
             streamer_args += ["--device", device, "--device-timeout", "2"]
-            if self.cam and self.cam.has_mjpg_hw_encoder():
+            if self.cam.has_mjpg_hw_encoder():
                 streamer_args += ["--format", "MJPEG", "--encoder", "HW"]
 
         v4l2ctl = self.parameters["v4l2ctl"]

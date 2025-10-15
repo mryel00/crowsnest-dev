@@ -70,7 +70,7 @@ class Streamer(Section, ABC):
         return success
 
     @abstractmethod
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
+    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
         raise NotImplementedError("If you see this, something went wrong!!!")
 
 

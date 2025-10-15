@@ -44,7 +44,12 @@ class Cam(Section):
             )
             watchdog.configured_devices.append(self.streamer.parameters["device"])
             process = await self.streamer.execute(lock)
-            await process.wait()
+            if process:
+                await process.wait()
+            else:
+                logger.log_error(
+                    f"Start of {self.parameters['mode']} [cam {self.name}] failed!"
+                )
         except Exception:
             logger.log_multiline(traceback.format_exc().strip(), logger.log_error)
             logger.log_error(
