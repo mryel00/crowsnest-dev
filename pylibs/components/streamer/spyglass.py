@@ -45,8 +45,10 @@ class Spyglass(Streamer):
         # custom flags
         streamer_args += self.parameters["custom_flags"].split()
 
-        venv_path = Spyglass.binary_paths[0] + "/.venv/bin/python3"
-        cmd = venv_path + " " + self.binary_path + " " + " ".join(streamer_args)
+        venv_path = ""
+        if "run.py" in self.binary_path:
+            venv_path = Spyglass.binary_paths[0] + "/.venv/bin/python3" + " "
+        cmd = venv_path + self.binary_path + " " + " ".join(streamer_args)
         log_pre = f"{self.keyword} [cam {self.name}]: "
 
         logger.log_debug(log_pre + f"Parameters: {' '.join(streamer_args)}")
