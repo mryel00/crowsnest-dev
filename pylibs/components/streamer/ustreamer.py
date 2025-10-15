@@ -25,10 +25,8 @@ class Ustreamer(Streamer):
         res = "x".join(self.parameters["resolution"])
         fps = self.parameters["max_fps"]
         device = self.parameters["device"]
-        cam = camera.camera_manager.get_cam_by_path(device)
-        if isinstance(cam, UVC):
-            self.cam = cam
-        else:
+        self.cam = camera.camera_manager.get_cam_by_path(device)
+        if not isinstance(self.cam, UVC):
             logger.log_warning(
                 "Wrong camera type or device not found. Make sure the device path is correct and points to a camera supported by ustreamer!"
             )
