@@ -9,7 +9,7 @@ from .streamer import Streamer
 
 class Spyglass(Streamer):
     keyword = "spyglass"
-    binary_names = ["run.py"]
+    binary_names = ["run.py", "spyglass"]
     binary_paths = ["bin/spyglass"]
 
     async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
