@@ -11,7 +11,7 @@ class Libcamera(camera.Camera):
         self.control_values = self._get_controls()
         self.formats = []
 
-    def _get_controls(self) -> str:
+    def _get_controls(self) -> dict:
         ctrls = {}
         try:
             from libcamera import CameraManager, Rectangle
@@ -79,7 +79,7 @@ class Libcamera(camera.Camera):
     def init_camera_type() -> list:
         cmd = shutil.which("rpicam-hello") or shutil.which("libcamera-hello")
         if not cmd:
-            return {}
+            return []
         libcam_cmd = f"{cmd} --list-cameras"
         libcam = utils.execute_shell_command(libcam_cmd, strip=False)
         cams = [Libcamera(path) for path in re.findall(r"\((/base.*?)\)", libcam)]

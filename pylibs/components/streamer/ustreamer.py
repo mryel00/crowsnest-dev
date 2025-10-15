@@ -29,8 +29,8 @@ class Ustreamer(Streamer):
         if isinstance(cam, UVC):
             self.cam = cam
         else:
-            logger.log_error(
-                "Wrong camera type. Make sure the device path is correct and points to a camera supported by ustreamer!"
+            logger.log_warning(
+                "Wrong camera type or device not found. Make sure the device path is correct and points to a camera supported by ustreamer!"
             )
 
         streamer_args = [
