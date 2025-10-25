@@ -67,7 +67,7 @@ build_ustreamer() {
 }
 
 install_apt_sources() {
-    local id version_id rpi
+    local id version_id
 
     id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
     version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
