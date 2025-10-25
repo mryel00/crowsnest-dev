@@ -71,19 +71,19 @@ install_apt_sources() {
 
     id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
     version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
-    rpi=""
+    variant="generic"
 
     if [[ "$(is_raspios)" = "1" || "$(is_dietpi)" = "1" ]]; then
-        rpi="-rpi"
+        variant="rpi"
         id="debian"
     fi
 
     if [[ "${id}" = "debian" ]] && [[ "${version_id}" = "11" ]]; then
         curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
-        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-${id}-${version_id}${rpi}.list"
+        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-${id}-${version_id}-${variant}.list"
         echo "1"
     else
-        if curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-${id}-${version_id}${rpi}.sources"; then
+        if curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-${id}-${version_id}-${variant}.sources"; then
             curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
             echo "1"
         else
@@ -101,7 +101,13 @@ install_apt_streamer() {
         status_msg "Running apt-get update again ..." "1"
     fi
 
-    apps=("mainsail-ustreamer" "mainsail-spyglass" "mainsail-camera-streamer")
+    apps=("mainsail-ustreamer" "mainsail-spyglass")
+    if [[ "$(is_raspios)" = "1" ]]; then
+        apps+=("mainsail-camera-streamer-raspi")
+    else
+        apps+=("mainsail-camera-streamer-generic")
+    fi
+
     for pkg in "${apps[@]}"; do
         if apt-get --yes --no-install-recommends install "${pkg}"; then
             echo "${pkg} installed successfully."
