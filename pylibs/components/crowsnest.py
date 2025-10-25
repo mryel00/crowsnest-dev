@@ -2,6 +2,7 @@
 
 import asyncio
 from configparser import SectionProxy
+from typing import Optional
 
 from .section import Section
 
@@ -21,7 +22,7 @@ class Crowsnest(Section):
             }
         )
 
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
+    async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         raise NotImplementedError("If you see this, something went wrong!!!")
 
 

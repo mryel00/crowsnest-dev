@@ -6,6 +6,7 @@ from abc import ABC, abstractmethod
 from configparser import SectionProxy
 from os import listdir
 from os.path import isfile, join
+from typing import Optional
 
 from ... import logger, utils
 from ..section import Section
@@ -70,7 +71,7 @@ class Streamer(Section, ABC):
         return success
 
     @abstractmethod
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
+    async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         raise NotImplementedError("If you see this, something went wrong!!!")
 
 

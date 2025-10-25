@@ -3,6 +3,7 @@
 import asyncio
 import re
 from configparser import SectionProxy
+from typing import Optional
 
 from pylibs.camera.types.uvc import UVC
 
@@ -15,7 +16,7 @@ class Ustreamer(Streamer):
     binary_names = ["ustreamer.bin", "ustreamer"]
     binary_paths = ["bin/ustreamer"]
 
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
+    async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         if self.parameters["no_proxy"]:
             host = "0.0.0.0"
             logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
@@ -109,7 +110,7 @@ class Ustreamer(Streamer):
         except (ValueError, IndexError):
             logger.log_quiet(f"Failed to set parameter: '{ctrl.strip()}'", prefix)
 
-    def _set_v4l2_ctrls(self, ctrls: list[str] | None = None) -> None:
+    def _set_v4l2_ctrls(self, ctrls: Optional[list[str]] = None) -> None:
         section = f"[cam {self.name}]"
         prefix = "V4L2 Control: "
         if not ctrls:
