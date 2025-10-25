@@ -3,7 +3,7 @@
 import asyncio
 from abc import ABC, abstractmethod
 from configparser import SectionProxy
-from typing import Any
+from typing import Any, Optional
 
 from .. import logger
 
@@ -46,7 +46,7 @@ class Section(ABC):
         self.parameters: dict[str, Any] = {}
 
     @abstractmethod
-    async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process | None:
+    async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         raise NotImplementedError("If you see this, something went wrong!!!")
 
 
