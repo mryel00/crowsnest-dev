@@ -22,7 +22,7 @@ def load_function(
 
 def load_component(
     module_name: str, name: str, config_section: SectionProxy, path="pylibs.components"
-) -> Any | None:
+) -> Any:
     try:
         return load_function("load_component", module_name, path)(name, config_section)
     except (ModuleNotFoundError, AttributeError) as e:
