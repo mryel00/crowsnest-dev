@@ -32,7 +32,7 @@ def load_component(
     return None
 
 
-def load_streamer(module_name: str, path="pylibs.components") -> Any | None:
+def load_streamer(module_name: str, path="pylibs.components") -> Optional[Any]:
     try:
         return load_function("load_streamer", module_name, path)()
     except (ModuleNotFoundError, AttributeError) as e:
