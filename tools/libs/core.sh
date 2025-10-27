@@ -38,38 +38,9 @@ test_load_module() {
     fi
 }
 
-link_pkglist_rpi() {
-    sudo -u "${BASE_USER}" ln -sf "${SRC_DIR}/libs/pkglist-rpi.sh" "${SRC_DIR}/pkglist.sh" &> /dev/null || return 1
-}
-
-link_pkglist_generic() {
-    sudo -u "${BASE_USER}" ln -sf "${SRC_DIR}/libs/pkglist-generic.sh" "${SRC_DIR}/pkglist.sh" &> /dev/null || return 1
-}
-
 source_pkglist_file() {
     # shellcheck disable=SC1091
     . "${SRC_DIR}/pkglist.sh"
-}
-
-install_runtime_dependencies() {
-    local dep
-    local -a pkg
-
-    pkg=()
-    while IFS= read -r line; do
-        # Only process lines that start with 8 spaces and a quote
-        if [[ "${line}" =~ ^\ {8}\" ]]; then
-            dep=$(echo "${line}" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
-            depname="${dep%%;*}"
-            if ! echo "${dep}" | grep -q "vendor == 'raspberry-pi'"; then
-                pkg+=("${depname}")
-            elif [[ "$(is_raspios)" == "1" ]]; then
-                pkg+=("${depname}")
-            fi
-        fi
-    done < "${SRC_DIR}/system-dependencies.json"
-
-    apt-get --yes --no-install-recommends install "${pkg[@]}" || return 1
 }
 
 install_dependencies() {
