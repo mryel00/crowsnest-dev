@@ -108,6 +108,27 @@ install_apt_sources() {
     fi
 }
 
+install_runtime_dependencies() {
+    local dep
+    local -a pkg
+
+    pkg=()
+    while IFS= read -r line; do
+        # Only process lines that start with 8 spaces and a quote
+        if [[ "${line}" =~ ^\ {8}\" ]]; then
+            dep=$(echo "${line}" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
+            depname="${dep%%;*}"
+            if ! echo "${dep}" | grep -q "vendor == 'raspberry-pi'"; then
+                pkg+=("${depname}")
+            elif [[ "$(is_raspios)" == "1" ]]; then
+                pkg+=("${depname}")
+            fi
+        fi
+    done < "${SRC_DIR}/system-dependencies.json"
+
+    apt-get --yes --no-install-recommends install "${pkg[@]}" || return 1
+}
+
 install_apt_streamer() {
     msg "Running apt-get update again ..."
     if run_apt_update; then
@@ -154,7 +175,7 @@ install() {
     install_apps
 }
 
-remove_venv() {
+delete_venv() {
     msg "Deleting python venv ..."
     if [[ -d "${VENV}" ]]; then
         msg "Deleting '${VENV}' ... [DONE]"
@@ -164,7 +185,7 @@ remove_venv() {
     fi
 }
 
-delete_apss() {
+delete_apps() {
     for path in "${ALL_PATHS[@]}"; do
         if [[ ! -d "${path}" ]]; then
             printf "'%s' does not exist! Delete ... [SKIPPED]\n" "${path}"
@@ -184,6 +205,11 @@ delete_apss() {
     done
 }
 
+delete() {
+    delete_venv
+    delete_apps
+}
+
 main() {
     ## Error exit if no args given, show help
     if [[ $# -eq "0" ]]; then
@@ -198,9 +224,12 @@ main() {
     ## Get opts
     while true; do
         case "${1}" in
+            -i|--install)
+                install
+                break
+            ;;
             -d|--delete)
-                delete_venv
-                delete_apps
+                delete
                 break
             ;;
             *)
