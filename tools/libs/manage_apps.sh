@@ -149,6 +149,11 @@ install_apps() {
     fi
 }
 
+install() {
+    install_venv
+    install_apps
+}
+
 remove_venv() {
     msg "Deleting python venv ..."
     if [[ -d "${VENV}" ]]; then

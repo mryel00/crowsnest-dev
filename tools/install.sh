@@ -119,7 +119,8 @@ main() {
     fi
 
     add_group_video
-    if install_apps; then
+
+    if install; then
         status_msg "Setup streamer apps ..." "0"
     else
         status_msg "Setup streamer apps ..." "1"
