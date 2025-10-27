@@ -20,6 +20,7 @@ set -Ee
 # set -x
 
 . "${SRC_DIR}/libs/helper_fn.sh"
+. "${SRC_DIR}/libs/messages.sh"
 
 # Ustreamer repo
 if [[ -z "${CROWSNEST_USTREAMER_REPO_SHIP}" ]]; then
@@ -29,6 +30,21 @@ if [[ -z "${CROWSNEST_USTREAMER_REPO_BRANCH}" ]]; then
     CROWSNEST_USTREAMER_REPO_BRANCH="master"
 fi
 USTREAMER_PATH="bin/ustreamer"
+
+# Paths of repos
+ALL_PATHS=(
+    "${USTREAMER_PATH}"
+)
+
+APPS=("mainsail-ustreamer" "mainsail-spyglass")
+if [[ "$(is_raspios)" = "1" ]]; then
+    APPS+=("mainsail-camera-streamer-raspi")
+else
+    APPS+=("mainsail-camera-streamer-generic")
+fi
+
+: "${BASE_USER:=${SUDO_USER:-$USER}}"
+VENV="/home/${BASE_USER}/crowsnest-env"
 
 clone_ustreamer() {
     ## remove bin/ustreamer if exist
@@ -93,7 +109,6 @@ install_apt_sources() {
 }
 
 install_apt_streamer() {
-    local -a apps
     msg "Running apt-get update again ..."
     if run_apt_update; then
         status_msg "Running apt-get update again ..." "0"
@@ -101,14 +116,7 @@ install_apt_streamer() {
         status_msg "Running apt-get update again ..." "1"
     fi
 
-    apps=("mainsail-ustreamer" "mainsail-spyglass")
-    if [[ "$(is_raspios)" = "1" ]]; then
-        apps+=("mainsail-camera-streamer-raspi")
-    else
-        apps+=("mainsail-camera-streamer-generic")
-    fi
-
-    for pkg in "${apps[@]}"; do
+    for pkg in "${APPS[@]}"; do
         if apt-get --yes --no-install-recommends install "${pkg}"; then
             echo "${pkg} installed successfully."
         else
@@ -117,10 +125,16 @@ install_apt_streamer() {
     done
 }
 
-install_apps() {
+install_venv() {
     msg "Setup python venv ..."
-    python3 -m venv --system-site-packages "${HOME}/crowsnest-env"
+    if [[ -d "${VENV}"; then
+        msg "Python venv already exists."
+        remove_venv
+    fi
+    python3 -m venv --system-site-packages "${VENV}"
+}
 
+install_apps() {
     msg "Setup Mainsail apt repository ..."
     if [[ "$(install_apt_sources)" = "0" ]]; then
         msg "We do not support your Distro with the Mainsail apt repository."
@@ -134,3 +148,70 @@ install_apps() {
         msg "Note: camera-streamer and spyglass are supposed to fail on non Raspberry Pi OS systems"
     fi
 }
+
+remove_venv() {
+    msg "Deleting python venv ..."
+    if [[ -d "${VENV}" ]]; then
+        msg "Deleting '${VENV}' ... [DONE]"
+        rm -rf "${VENV}"
+    else
+        msg "'${VENV}' does not exist! Delete ... [SKIPPED]"
+    fi
+}
+
+delete_apss() {
+    for path in "${ALL_PATHS[@]}"; do
+        if [[ ! -d "${path}" ]]; then
+            printf "'%s' does not exist! Delete ... [SKIPPED]\n" "${path}"
+        fi
+        if [[ -d "${path}" ]]; then
+            printf "Deleting '%s' ... [DONE]\n" "${path}"
+            rm -rf "${path}"
+        fi
+    done
+
+    for pkg in "${APPS[@]}"; do
+        if apt-get --yes remove "${pkg}"; then
+            echo "${pkg} removed successfully."
+        else
+            echo "${pkg} not found or failed to remove."
+        fi
+    done
+}
+
+main() {
+    ## Error exit if no args given, show help
+    if [[ $# -eq "0" ]]; then
+        printf "ERROR: No options given ...\n"
+        show_help
+        exit 1
+    fi
+    ## Error exit if too many args given
+    if [[ $# -gt "1" ]]; then
+        printf "ERROR: Too many options given ...\n"
+        show_help
+        exit 1
+    fi
+    ## Get opts
+    while true; do
+        case "${1}" in
+            -i|--install)
+                install_venv
+                install_apps
+                break
+            ;;
+            -d|--delete)
+                delete_venv
+                delete_apps
+                break
+            ;;
+            *)
+                printf "Unknown option: %s" "${1}"
+                break
+            ;;
+        esac
+    done
+}
+
+main "${@}"
+exit 0

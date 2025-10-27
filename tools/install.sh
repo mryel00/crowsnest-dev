@@ -27,7 +27,6 @@ SRC_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 
 main() {
     . "${SRC_DIR}/libs/helper_fn.sh"
-    . "${SRC_DIR}/libs/install_apps.sh"
     . "${SRC_DIR}/libs/config.sh"
     . "${SRC_DIR}/libs/core.sh"
     . "${SRC_DIR}/libs/interactive.sh"
@@ -119,8 +118,7 @@ main() {
     fi
 
     add_group_video
-
-    if install_apps; then
+    if "${SRC_DIR}/libs/manage_apps.sh" --install; then
         status_msg "Setup streamer apps ..." "0"
     else
         status_msg "Setup streamer apps ..." "1"
