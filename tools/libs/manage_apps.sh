@@ -19,8 +19,9 @@ set -Ee
 # Debug
 # set -x
 
-. "${SRC_DIR}/libs/helper_fn.sh"
-. "${SRC_DIR}/libs/messages.sh"
+TOOLS_LIB_DIR="$(dirname "$(readlink -f "${0}")")"
+. "${TOOLS_LIB_DIR}/libs/helper_fn.sh"
+. "${TOOLS_LIB_DIR}/libs/messages.sh"
 
 # Ustreamer repo
 if [[ -z "${CROWSNEST_USTREAMER_REPO_SHIP}" ]]; then
@@ -37,7 +38,7 @@ ALL_PATHS=(
 )
 
 APPS=("mainsail-ustreamer" "mainsail-spyglass")
-if [[ "$(is_raspios)" = "1" ]]; then
+if [[ "$(use_pi_specifics)" = "1" ]]; then
     APPS+=("mainsail-camera-streamer-raspi")
 else
     APPS+=("mainsail-camera-streamer-generic")
@@ -106,27 +107,6 @@ install_apt_sources() {
             echo "0"
         fi
     fi
-}
-
-install_runtime_dependencies() {
-    local dep
-    local -a pkg
-
-    pkg=()
-    while IFS= read -r line; do
-        # Only process lines that start with 8 spaces and a quote
-        if [[ "${line}" =~ ^\ {8}\" ]]; then
-            dep=$(echo "${line}" | sed -e 's/^[[:space:]]*"//' -e 's/",\{0,1\}$//')
-            depname="${dep%%;*}"
-            if ! echo "${dep}" | grep -q "vendor == 'raspberry-pi'"; then
-                pkg+=("${depname}")
-            elif [[ "$(is_raspios)" == "1" ]]; then
-                pkg+=("${depname}")
-            fi
-        fi
-    done < "${SRC_DIR}/system-dependencies.json"
-
-    apt-get --yes --no-install-recommends install "${pkg[@]}" || return 1
 }
 
 install_apt_streamer() {

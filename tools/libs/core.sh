@@ -79,6 +79,11 @@ install_dependencies() {
     for dep in ${PKGLIST}; do
         pkg+=("${dep}")
     done
+    if [[ "$(use_pi_specifics)" = "1" ]]; then
+        for dep in ${PKGLIST_PI}; do
+            pkg+=("${dep}")
+        done
+    fi
     apt-get --yes --no-install-recommends install "${pkg[@]}" || return 1
 }
 

@@ -82,6 +82,15 @@ run_apt_update() {
     apt-get -q --allow-releaseinfo-change update
 }
 
+use_pi_specifics() {
+    if [[ "$(is_raspios)" = "1" ]] ||
+    [[ "$(is_dietpi)" = "1" ]]; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 use_cs() {
     if { [[ "$(is_raspios)" = "1" ]] ||
     [[ "$(is_dietpi)" = "1" ]]; } &&

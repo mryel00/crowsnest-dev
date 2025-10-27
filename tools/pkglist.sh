@@ -19,4 +19,5 @@ set -Ee
 
 ### Crowsnest Dependencies
 # shellcheck disable=SC2034
-PKGLIST="curl python3 python3-venv"
+PKGLIST="curl crudini python3 python3-venv"
+PKGLIST_PI="python3-libcamera"
