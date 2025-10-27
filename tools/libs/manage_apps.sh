@@ -43,7 +43,7 @@ else
     APPS+=("mainsail-camera-streamer-generic")
 fi
 
-: "${BASE_USER:=${SUDO_USER:-$USER}}"
+BASE_USER:=${SUDO_USER:-${USER}}
 VENV="/home/${BASE_USER}/crowsnest-env"
 
 clone_ustreamer() {
