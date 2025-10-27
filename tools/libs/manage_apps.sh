@@ -127,7 +127,7 @@ install_apt_streamer() {
 
 install_venv() {
     msg "Setup python venv ..."
-    if [[ -d "${VENV}"; then
+    if [[ -d "${VENV}" ]]; then
         msg "Python venv already exists."
         remove_venv
     fi
