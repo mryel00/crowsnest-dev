@@ -119,7 +119,7 @@ install_apt_streamer() {
 
 install_apps() {
     msg "Setup python venv ..."
-    python3 -m venv --system-site-packages "${SRC_DIR}/../.venv"
+    python3 -m venv --system-site-packages "${HOME}/crowsnest-env"
 
     msg "Setup Mainsail apt repository ..."
     if [[ "$(install_apt_sources)" = "0" ]]; then
