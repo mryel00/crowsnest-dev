@@ -183,23 +183,16 @@ main() {
     ## Error exit if no args given, show help
     if [[ $# -eq "0" ]]; then
         printf "ERROR: No options given ...\n"
-        show_help
         exit 1
     fi
     ## Error exit if too many args given
     if [[ $# -gt "1" ]]; then
         printf "ERROR: Too many options given ...\n"
-        show_help
         exit 1
     fi
     ## Get opts
     while true; do
         case "${1}" in
-            -i|--install)
-                install_venv
-                install_apps
-                break
-            ;;
             -d|--delete)
                 delete_venv
                 delete_apps
@@ -213,5 +206,8 @@ main() {
     done
 }
 
-main "${@}"
-exit 0
+## Error exit if no args given, show help
+if [[ $# -gt "0" ]]; then
+    main "${@}"
+    exit 0
+fi

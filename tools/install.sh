@@ -30,6 +30,7 @@ main() {
     . "${SRC_DIR}/libs/config.sh"
     . "${SRC_DIR}/libs/core.sh"
     . "${SRC_DIR}/libs/interactive.sh"
+    . "${SRC_DIR}/libs/manage_apps.sh"
     . "${SRC_DIR}/libs/messages.sh"
     . "${SRC_DIR}/libs/set_gpumem.sh"
     . "${SRC_DIR}/libs/update_manager.sh"
@@ -118,7 +119,7 @@ main() {
     fi
 
     add_group_video
-    if "${SRC_DIR}/libs/manage_apps.sh" --install; then
+    if install_apps; then
         status_msg "Setup streamer apps ..." "0"
     else
         status_msg "Setup streamer apps ..." "1"
