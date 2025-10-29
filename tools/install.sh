@@ -120,7 +120,7 @@ main() {
 
     add_group_video
 
-    if install; then
+    if setup_runtime_env; then
         status_msg "Setup streamer apps ..." "0"
     else
         status_msg "Setup streamer apps ..." "1"

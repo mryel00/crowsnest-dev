@@ -248,6 +248,7 @@ main() {
         msg "\t==> crowsnest service is enabled"
     fi
 
+    sudo SRC_DIR="${SRC_DIR}" bash -c '. "${SRC_DIR}/libs/manage_apps.sh" && delete_runtime_env'
 
     remove_service_file
 

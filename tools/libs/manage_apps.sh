@@ -150,7 +150,7 @@ install_apps() {
     fi
 }
 
-install() {
+setup_runtime_env() {
     install_venv
     install_apps
 }
@@ -185,7 +185,7 @@ delete_apps() {
     done
 }
 
-delete() {
+delete_runtime_env() {
     delete_venv
     delete_apps
 }
