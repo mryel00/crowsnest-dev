@@ -9,6 +9,7 @@ from .section import Section
 
 class Crowsnest(Section):
     def __init__(self, config_section: SectionProxy) -> None:
+        self.section = "[crowsnest]"
         super().__init__("crowsnest", config_section)
 
     def parse_config_section(self, section: SectionProxy) -> None:

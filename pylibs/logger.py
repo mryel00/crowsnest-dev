@@ -1,5 +1,6 @@
 #!/usr/bin/python3
 
+import functools
 import logging
 import logging.handlers
 import os
@@ -46,36 +47,32 @@ def setup_logging(log_path, filemode="a", log_level=logging.INFO):
 
 
 def set_log_level(level):
-    global logger
     logger.setLevel(level)
 
 
-def log_quiet(msg, prefix=""):
-    global logger
-    logger.log(QUIET, prefix + msg)
+def log(level, msg, prefix="", **kwargs):
+    level_prefix = kwargs.pop("level_prefix", "")
+    if level_prefix:
+        final_msg = f"{level_prefix}: {prefix}{msg}"
+    else:
+        final_msg = f"{prefix}{msg}"
+    logger.log(level, final_msg, **kwargs)
 
 
-def log_info(msg, prefix="INFO: "):
-    global logger
-    logger.info(prefix + msg)
+log_quiet = functools.partial(log, QUIET)
+log_info = functools.partial(log, logging.INFO, level_prefix="INFO")
+log_info_silent = functools.partial(log, logging.INFO)
+log_debug = functools.partial(log, DEBUG, level_prefix="DEBUG")
+log_warning = functools.partial(log, logging.WARNING, level_prefix="WARN")
+log_error = functools.partial(log, logging.ERROR, level_prefix="ERROR")
 
 
-def log_debug(msg, prefix="DEBUG: "):
-    global logger
-    logger.log(DEBUG, prefix + msg)
-
-
-def log_warning(msg, prefix="WARN: "):
-    global logger
-    logger.warning(prefix + msg)
-
-
-def log_error(msg, prefix="ERROR: "):
-    global logger
-    logger.error(prefix + msg)
-
-
-def log_multiline(msg, log_func, *args):
+def log_multiline(msg, log_func, *args, **kwargs):
     lines = msg.split("\n")
+    line_prefix = kwargs.pop("line_prefix", "")
     for line in lines:
-        log_func(line, *args)
+        if line_prefix:
+            final_line = f"{line_prefix}: {line}"
+        else:
+            final_line = f"{line}"
+        log_func(final_line, *args, **kwargs)

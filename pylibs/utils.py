@@ -45,9 +45,8 @@ def load_streamer(module_name: str, path="pylibs.components") -> Optional[Any]:
 async def log_subprocess_output(stream, log_func, line_prefix=""):
     line = await stream.readline()
     while line:
-        l = line_prefix
-        l += line.decode("utf-8").strip()
-        log_func(l)
+        l = line.decode("utf-8").strip()
+        log_func(l, prefix=line_prefix)
         line = await stream.readline()
 
 

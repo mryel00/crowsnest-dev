@@ -19,7 +19,7 @@ class Ustreamer(Streamer):
     async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         if self.parameters["no_proxy"]:
             host = "0.0.0.0"
-            logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
+            self.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
         else:
             host = "127.0.0.1"
         port = self.parameters["port"]
@@ -28,8 +28,9 @@ class Ustreamer(Streamer):
         device = self.parameters["device"]
         self.cam = camera.camera_manager.get_cam_by_path(device)
         if not isinstance(self.cam, UVC):
-            logger.log_warning(
-                "Wrong camera type or device not found. Make sure the device path is correct and points to a camera supported by ustreamer!"
+            self.log_warning(
+                "Wrong camera type or device not found. Make sure the device path "
+                "is correct and points to a camera supported by ustreamer!"
             )
             return None
 
@@ -72,13 +73,13 @@ class Ustreamer(Streamer):
         streamer_args += self.parameters["custom_flags"].split()
 
         cmd = self.binary_path + " " + " ".join(streamer_args)
-        log_pre = f"{self.keyword} [cam {self.name}]: "
+        log_pre = f"{self.keyword} "
 
-        logger.log_debug(log_pre + f"Parameters: {' '.join(streamer_args)}")
+        self.log_debug(f"Parameters: {' '.join(streamer_args)}", prefix=log_pre)
         process, _, _ = await utils.execute_command(
             cmd,
             info_log_pre=log_pre,
-            info_log_func=logger.log_debug,
+            info_log_func=self.log_debug,
             error_log_pre=log_pre,
             error_log_func=self._custom_log,
         )
@@ -94,52 +95,54 @@ class Ustreamer(Streamer):
 
         return process
 
-    def _custom_log(self, msg: str):
+    def _custom_log(self, msg: str, prefix=""):
         if msg.endswith("==="):
             msg = msg[:-28]
         else:
             msg = re.sub(r"-- (.*?) \[.*?\] --", r"\1", msg)
-        logger.log_debug(msg)
+        self.log_debug(msg, prefix)
 
-    def _set_v4l2_ctrl(self, ctrl: str, prefix="") -> None:
+    def _set_v4l2_ctrl(self, ctrl: str, postfix="") -> None:
         try:
             c = ctrl.split("=")[0].strip().lower()
             v = int(ctrl.split("=")[1].strip())
             if not self.cam or not self.cam.set_control(c, v):
                 raise ValueError
         except (ValueError, IndexError):
-            logger.log_quiet(f"Failed to set parameter: '{ctrl.strip()}'", prefix)
+            self.log_quiet(
+                f"Failed to set parameter: '{ctrl.strip()}'", postfix=postfix
+            )
 
     def _set_v4l2_ctrls(self, ctrls: Optional[list[str]] = None) -> None:
-        section = f"[cam {self.name}]"
-        prefix = "V4L2 Control: "
+        postfix = " V4L2 Control"
         if not ctrls:
-            logger.log_quiet(f"No parameters set for {section}. Skipped.", prefix)
+            self.log_quiet(f"No parameters set. Skipped.", postfix=postfix)
             return
-        logger.log_quiet(f"Device: {section}", prefix)
-        logger.log_quiet(f"Options: {', '.join(ctrls)}", prefix)
+        self.log_quiet(f"Options: {', '.join(ctrls)}", postfix=postfix)
         avail_ctrls = self.cam.get_controls_string()
         for ctrl in ctrls:
             c = ctrl.split("=")[0].strip().lower()
             if c not in avail_ctrls:
-                logger.log_quiet(
+                self.log_quiet(
                     f"Parameter '{ctrl.strip()}' not available for '{self.parameters['device']}'. Skipped.",
-                    prefix,
+                    postfix=postfix,
                 )
                 continue
-            self._set_v4l2_ctrl(ctrl, prefix)
+            self._set_v4l2_ctrl(ctrl, postfix)
         # Repulls the string to print current values
-        logger.log_multiline(
-            self.cam.get_controls_string(), logger.log_debug, "DEBUG: v4l2ctl: "
+        self.log_multiline(
+            self.cam.get_controls_string(),
+            logger.log_debug,
+            postfix=" v4l2ctl",
         )
 
     def _brokenfocus(self, focus_absolute_conf: str) -> None:
         cur_val = self.cam.get_current_control_value("focus_absolute")
         if cur_val and cur_val != focus_absolute_conf:
-            logger.log_warning(f"Detected 'brokenfocus' device.")
-            logger.log_info(f"Try to set to configured Value.")
+            self.log_warning(f"Detected 'brokenfocus' device.")
+            self.log_info(f"Try to set to configured Value.")
             self._set_v4l2_ctrl(f"focus_absolute={focus_absolute_conf}")
-            logger.log_debug(
+            self.log_debug(
                 f"Value is now: {self.cam.get_current_control_value('focus_absolute')}"
             )
 

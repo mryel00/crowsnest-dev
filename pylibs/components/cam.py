@@ -26,7 +26,7 @@ class Cam(Section):
             path="pylibs.components.streamer",
         )
         if component is None or not isinstance(component, Streamer):
-            logger.log_error(f"Tried to load a component that is not a Streamer!")
+            self.log_error(f"Tried to load a component that is not a Streamer!")
             return
         self.streamer: Streamer = component
 
@@ -39,7 +39,7 @@ class Cam(Section):
             return
         try:
             await lock.acquire()
-            logger.log_quiet(
+            self.log_quiet(
                 f"Start {self.streamer.keyword} with device "
                 f"{self.streamer.parameters['device']} ..."
             )
@@ -48,14 +48,10 @@ class Cam(Section):
             if process:
                 await process.wait()
             else:
-                logger.log_error(
-                    f"Start of {self.parameters['mode']} [cam {self.name}] failed!"
-                )
+                self.log_error(f"Start of {self.parameters['mode']} failed!")
         except Exception:
-            logger.log_multiline(traceback.format_exc().strip(), logger.log_error)
-            logger.log_error(
-                f"Start of {self.parameters['mode']} [cam {self.name}] failed!"
-            )
+            self.log_multiline(traceback.format_exc().strip(), logger.log_error)
+            self.log_error(f"Start of {self.parameters['mode']} failed!")
         finally:
             watchdog.configured_devices.remove(self.streamer.parameters["device"])
             if lock.locked():

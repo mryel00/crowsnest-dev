@@ -15,7 +15,7 @@ class Spyglass(Streamer):
     async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
         if self.parameters["no_proxy"]:
             host = "0.0.0.0"
-            logger.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
+            self.log_info("Set to 'no_proxy' mode! Using 0.0.0.0!")
         else:
             host = "127.0.0.1"
         port = self.parameters["port"]
@@ -36,9 +36,9 @@ class Spyglass(Streamer):
 
         v4l2ctl = self.parameters["v4l2ctl"]
         if v4l2ctl:
-            prefix = "V4L2 Control: "
-            logger.log_quiet(f"Handling done by {self.keyword}", prefix)
-            logger.log_quiet(f"Trying to set: {v4l2ctl}", prefix)
+            postfix = " V4L2 Control"
+            self.log_quiet(f"Handling done by {self.keyword}", postfix=postfix)
+            self.log_quiet(f"Trying to set: {v4l2ctl}", postfix=postfix)
             for ctrl in v4l2ctl.split(","):
                 streamer_args += [f"--controls={ctrl.strip()}"]
 
@@ -49,15 +49,15 @@ class Spyglass(Streamer):
         if "run.py" in self.binary_path:
             venv_path = Spyglass.binary_paths[0] + "/.venv/bin/python3" + " "
         cmd = venv_path + self.binary_path + " " + " ".join(streamer_args)
-        log_pre = f"{self.keyword} [cam {self.name}]: "
+        log_pre = f"{self.keyword} "
 
-        logger.log_debug(log_pre + f"Parameters: {' '.join(streamer_args)}")
+        self.log_debug(f"Parameters: {' '.join(streamer_args)}", prefix=log_pre)
         process, _, _ = await utils.execute_command(
             cmd,
             info_log_pre=log_pre,
-            info_log_func=logger.log_debug,
+            info_log_func=self.log_debug,
             error_log_pre=log_pre,
-            error_log_func=logger.log_debug,
+            error_log_func=self.log_debug,
         )
         if lock.locked():
             lock.release()

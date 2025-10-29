@@ -27,19 +27,21 @@ def log_host_info():
     # OS Version
     distribution = utils.grep("/etc/os-release", "PRETTY_NAME")
     distribution = distribution.strip().split("=")[1].strip('"')
-    logger.log_info(f"Distribution: {distribution}", log_pre)
+    logger.log_info_silent(f"Distribution: {distribution}", log_pre)
 
     # Release Version of MainsailOS (if file present)
     try:
         with open("/etc/mainsailos-release", "r") as file:
             content = file.read()
-            logger.log_info(f"Release: {content.strip()}", log_pre)
+            logger.log_info_silent(f"Release: {content.strip()}", log_pre)
     except FileNotFoundError:
         pass
 
     # Kernel Version
     uname = os.uname()
-    logger.log_info(f"Kernel: {uname.sysname} {uname.release} {uname.machine}", log_pre)
+    logger.log_info_silent(
+        f"Kernel: {uname.sysname} {uname.release} {uname.machine}", log_pre
+    )
 
     ### Host Machine Infos
     # Host model
@@ -51,21 +53,21 @@ def log_host_info():
     else:
         model = model[1].strip()
 
-    logger.log_info(f"Model: {model}", log_pre)
+    logger.log_info_silent(f"Model: {model}", log_pre)
 
     # CPU count
     cpu_count = os.cpu_count()
-    logger.log_info(f"Available CPU Cores: {cpu_count}", log_pre)
+    logger.log_info_silent(f"Available CPU Cores: {cpu_count}", log_pre)
 
     # Avail mem
     memtotal = utils.grep("/proc/meminfo", "MemTotal:").split(":")[1].strip()
-    logger.log_info(f"Available Memory: {memtotal}", log_pre)
+    logger.log_info_silent(f"Available Memory: {memtotal}", log_pre)
 
     # Avail disk size
     total, _, free = shutil.disk_usage("/")
     total = utils.bytes_to_gigabytes(total)
     free = utils.bytes_to_gigabytes(free)
-    logger.log_info(f"Diskspace (avail. / total): {free}G / {total}G", log_pre)
+    logger.log_info_silent(f"Diskspace (avail. / total): {free}G / {total}G", log_pre)
 
 
 def log_streamer():
@@ -75,11 +77,11 @@ def log_streamer():
     for bin in Streamer.binaries:
         if Streamer.binaries[bin] is None:
             continue
-        logger.log_info(f"{bin}: {Streamer.binaries[bin]}", log_pre)
+        logger.log_info_silent(f"{bin}: {Streamer.binaries[bin]}", log_pre)
 
 
 def log_config(config_path):
-    logger.log_info("Print Configfile: '" + config_path + "'")
+    logger.log_info(f"Print Configfile: '{config_path}'")
     with open(config_path, "r") as file:
         config_txt = file.read()
         # Remove comments
@@ -91,7 +93,9 @@ def log_config(config_path):
         # Remove leading and trailing whitespaces
         config_txt = config_txt.strip()
         # Split the config file into lines
-        logger.log_multiline(config_txt, logger.log_info, logger.indentation)
+        logger.log_multiline(
+            config_txt, logger.log_info_silent, prefix=logger.indentation
+        )
 
 
 def log_cams():
@@ -121,32 +125,36 @@ def log_cams():
 
 def log_libcam(cam: camera.Libcamera) -> None:
     logger.log_info(f"Detected 'libcamera' device -> {cam.path}")
-    logger.log_info(f"Advertised Formats:", "")
+    logger.log_info_silent(f"Advertised Formats:")
     log_camera_formats(cam)
-    logger.log_info(f"Supported Controls:", "")
+    logger.log_info_silent(f"Supported Controls:")
     log_camera_ctrls(cam)
 
 
 def log_uvc_cam(cam: camera.UVC) -> None:
-    logger.log_info(f"{cam.path_by_id} -> {cam.path}", "")
-    logger.log_info(f"Supported Formats:", "")
+    logger.log_info_silent(f"{cam.path_by_id} -> {cam.path}")
+    logger.log_info_silent(f"Supported Formats:")
     log_camera_formats(cam)
-    logger.log_info(f"Supported Controls:", "")
+    logger.log_info_silent(f"Supported Controls:")
     log_camera_ctrls(cam)
 
 
 def log_legacy_cam(camera_path: str) -> None:
     cam: camera.UVC = camera.camera_manager.get_cam_by_path(camera_path)
     logger.log_info(f"Detected 'Raspicam' Device -> {camera_path}")
-    logger.log_info(f"Supported Formats:", "")
+    logger.log_info_silent(f"Supported Formats:")
     log_camera_formats(cam)
-    logger.log_info(f"Supported Controls:", "")
+    logger.log_info_silent(f"Supported Controls:")
     log_camera_ctrls(cam)
 
 
 def log_camera_formats(cam: camera.Camera) -> None:
-    logger.log_multiline(cam.get_formats_string(), logger.log_info, logger.indentation)
+    logger.log_multiline(
+        cam.get_formats_string(), logger.log_info_silent, logger.indentation
+    )
 
 
 def log_camera_ctrls(cam: camera.Camera) -> None:
-    logger.log_multiline(cam.get_controls_string(), logger.log_info, logger.indentation)
+    logger.log_multiline(
+        cam.get_controls_string(), logger.log_info_silent, logger.indentation
+    )

@@ -67,20 +67,17 @@ async def start_sections():
             if section_keyword == "crowsnest":
                 continue
 
+            log_prefix = f"[{section}]: "
             section_name = " ".join(section_header[1:])
-            logger.log_quiet(f"Parse configuration of section [{section}] ...")
+            logger.log_quiet(f"Parse configuration ...", log_prefix)
             component = utils.load_component(
                 section_keyword, section_name, config[section]
             )
             if component is not None and component.initialized:
                 sect_objs.append(component)
-                logger.log_quiet(
-                    f"Configuration of section [{section}] looks good. Continue ..."
-                )
+                logger.log_quiet(f"Configuration looks good. Continue ...", log_prefix)
             else:
-                logger.log_error(
-                    f"Failed to parse config for section [{section}]! Skipping ..."
-                )
+                logger.log_error(f"Failed to parse config! Skipping ...", log_prefix)
 
         logger.log_quiet("Try to start configured Cams / Services ...")
         if sect_objs:

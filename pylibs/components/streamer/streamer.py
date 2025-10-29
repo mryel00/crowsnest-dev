@@ -64,7 +64,7 @@ class Streamer(Section, ABC):
     def check_config_section(self, config_section) -> bool:
         success = super().check_config_section(config_section)
         if self.binary_path is None:
-            logger.log_multiline(
+            self.log_multiline(
                 Streamer.missing_bin_txt % self.keyword, logger.log_error
             )
             success = False

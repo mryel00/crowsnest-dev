@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 
 import asyncio
+import functools
 from abc import ABC, abstractmethod
 from configparser import SectionProxy
 from typing import Any, Optional
@@ -20,6 +21,8 @@ class Section(ABC):
     def __init__(self, name: str, config_section: SectionProxy) -> None:
         self.name = name
         self.parse_config_section(config_section)
+        if not hasattr(self, "section"):
+            self.section = f"[{self.section_name} {self.name}]"
         self.initialized = self.check_config_section(config_section)
 
     # Check if the config section has only valid options
@@ -27,14 +30,13 @@ class Section(ABC):
         success = True
         for option, value in config_section.items():
             if option not in self.parameters:
-                logger.log_warning(
+                self.log_warning(
                     f"Parameter '{option}' is not supported by {self.keyword}!"
                 )
         for option, value in self.parameters.items():
             if value is None:
-                logger.log_error(
-                    f"Parameter '{option}' incorrectly set or missing in section "
-                    f"[{self.section_name} {self.name}] but is required!"
+                self.log_error(
+                    f"Parameter '{option}' incorrectly set or missing but is required!"
                 )
                 success = False
         return success
@@ -48,6 +50,29 @@ class Section(ABC):
     @abstractmethod
     async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
         raise NotImplementedError("If you see this, something went wrong!!!")
+
+    def __getattr__(self, name):
+        """Dynamically handle log method calls (e.g., log_info, log_debug)."""
+        if name.startswith("log_"):
+            log_function = getattr(logger, name, None)
+
+            if callable(log_function):
+
+                @functools.wraps(log_function)
+                def log_wrapper(msg, prefix="", postfix=""):
+                    formatted_msg = f"{prefix}{self.section}{postfix}: {msg}"
+                    log_function(formatted_msg)
+
+                return log_wrapper
+
+        raise AttributeError(
+            f"'{type(self).__name__}' object has no attribute '{name}'"
+        )
+
+    def log_multiline(self, msg, log_func, prefix="", postfix="", *args):
+        logger.log_multiline(
+            msg, log_func, line_prefix=f"{prefix}{self.section}{postfix}", *args
+        )
 
 
 def load_component(*args, **kwargs) -> Section:
