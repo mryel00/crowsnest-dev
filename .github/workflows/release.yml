@@ -11,10 +11,12 @@ on:
 jobs:
   update-master-branch:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - uses: everlytic/branch-merge@1.1.5
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           source_ref: 'develop'
           target_branch: 'master'
           commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
@@ -56,12 +58,14 @@ jobs:
     needs: [ 'release' ]
     name: Generate changelog
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           ref: 'master'
-          token: ${{ secrets.PAT }}
+          token: ${{ github.token }}
           fetch-depth: 0
 
       - name: Get latest tag
@@ -85,7 +89,7 @@ jobs:
 
       - uses: everlytic/branch-merge@1.1.5
         with:
-          github_token: ${{ secrets.PAT }}
+          github_token: ${{ github.token }}
           source_ref: 'master'
           target_branch: 'develop'
           commit_message_template: '[Automated] Merged {source_ref} into target {target_branch}'
