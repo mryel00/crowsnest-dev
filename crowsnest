@@ -53,7 +53,10 @@ while getopts ":vhc:s:d" arg; do
         ;;
         c )
             check_cfg "${OPTARG}"
-            export CROWSNEST_CFG="${OPTARG}"
+            CROWSNEST_CFG="${OPTARG}"
+        ;;
+        e )
+            CROWSNEST_ENV_PATH="${OPTARG}"
         ;;
         s )
             if [[ "$(awk '{print $1}' /proc/uptime | cut -d '.' -f 1)" -lt "120" ]]; then
@@ -95,4 +98,4 @@ function get_param {
 }
 
 set_log_path
-~/crowsnest-env/bin/python3 "${BASE_CN_PATH}/crowsnest.py" -c "${CROWSNEST_CFG}" -l "${CROWSNEST_LOG_PATH}"
+"${CROWSNEST_ENV_PATH}/bin/python3" "${BASE_CN_PATH}/crowsnest.py" -c "${CROWSNEST_CFG}" -l "${CROWSNEST_LOG_PATH}"

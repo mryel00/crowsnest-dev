@@ -110,6 +110,7 @@ install_env_file() {
     env_target="${CROWSNEST_ENV_PATH}/crowsnest.env"
     sudo -u "${BASE_USER}" cp -f "${env_file}" "${env_target}"
     sed -i "s|%CONFPATH%|${CROWSNEST_CONFIG_PATH}|" "${env_target}"
+    sed -i "s|%USER%|${BASE_USER}|" "${env_target}"
     [[ -f "${env_target}" ]] &&
     grep -q "${CROWSNEST_CONFIG_PATH}" "${env_target}" || return 1
 }
