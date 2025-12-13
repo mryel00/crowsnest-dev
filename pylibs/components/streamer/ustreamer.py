@@ -47,7 +47,7 @@ class Ustreamer(Streamer):
             "--allow-origin",
             "*",
             "--static",
-            '"ustreamer-www"',
+            '"resources/ustreamer-www"',
         ]
 
         if self._is_device_legacy():
