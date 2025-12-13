@@ -190,6 +190,11 @@ delete_runtime_env() {
     delete_apps
 }
 
+reinstall_runtime_env() {
+    delete_runtime_env
+    install_runtime_env
+}
+
 main() {
     ## Error exit if no args given, show help
     if [[ $# -eq "0" ]]; then
@@ -205,11 +210,15 @@ main() {
     while true; do
         case "${1}" in
             -i|--install)
-                install
+                setup_runtime_env
                 break
             ;;
             -d|--delete)
-                delete
+                delete_runtime_env
+                break
+            ;;
+            -r|--reinstall)
+                reinstall_runtime_env
                 break
             ;;
             *)

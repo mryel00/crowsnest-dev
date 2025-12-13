@@ -21,12 +21,6 @@ install: ## Install crowsnest (needs leading sudo)
 uninstall: ## Uninstall crowsnest
 	@bash -c 'tools/uninstall.sh'
 
-build: ## Compile backends / streamer
-	bash -c 'bin/build.sh --build'
-
-buildclean: ## Clean backends / streamer (for rebuilding)
-	bash -c 'bin/build.sh --clean'
-
 clean: ## Clean .config
 	@if [ -f tools/.config ]; then rm -f tools/.config; fi
 	@printf "Removed installer config file ...\n"
@@ -41,8 +35,7 @@ help: ## Shows this help
 
 update: ## Update crowsnest (fetches and pulls repository changes)
 	@git fetch && git pull
-	@bash -c 'bin/build.sh --reclone'
-	${MAKE} build
+	@bash -c 'tools/libs/manage_apps.sh --reinstall'
 
 report: ## Generate report.txt
 	@if [ -f ~/report.txt ]; then rm -f ~/report.txt; fi
