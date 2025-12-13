@@ -1,4 +1,3 @@
-# Crowsnest update_manager entry
 [update_manager crowsnest]
 type: git_repo
 path: ~/crowsnest
