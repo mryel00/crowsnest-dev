@@ -5,5 +5,5 @@ path: ~/crowsnest
 origin: https://github.com/mryel00/crowsnest-dev.git
 primary_branch: pynest
 managed_services: crowsnest
-system_dependencies: tools/system-dependencies.json
+system_dependencies: system-dependencies.json
 virtualenv: ~/crowsnest-env
