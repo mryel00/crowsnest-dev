@@ -155,11 +155,9 @@ dietpi_cs_settings() {
     sudo /boot/dietpi/func/dietpi-set_hardware rpi-codec enable
     sudo /boot/dietpi/func/dietpi-set_hardware rpi-camera enable
 
-    if [[ "$(is_buster)" = "0" ]]; then
-        if ! grep -q "camera_auto_detect=1" /boot/config.txt; then
-            msg "\nAdd camera_auto_detect=1 to /boot/config.txt ...\n"
-            echo "camera_auto_detect=1" >> /boot/config.txt
-        fi
+    if ! grep -q "camera_auto_detect=1" /boot/config.txt; then
+        msg "\nAdd camera_auto_detect=1 to /boot/config.txt ...\n"
+        echo "camera_auto_detect=1" >> /boot/config.txt
     fi
 }
 

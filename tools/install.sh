@@ -52,7 +52,7 @@ main() {
 
     [[ -n "${BASE_USER}" ]] || BASE_USER="${SUDO_USER}"
 
-    if [[ "$(is_buster)" = "1" ]]; then
+    if [[ "$(is_os_release "buster")" = "1" ]]; then
         not_supported_msg
         exit 1
     fi
@@ -63,7 +63,7 @@ main() {
     if run_apt_update; then
         status_msg "Running apt-get update first ..." "0"
     else
-        status_msg "Running apt-get update first ..." "1"
+        status_msg "Running apt-get update first ..." "4"
     fi
 
     if [[ "${CROWSNEST_UNATTENDED}" != "1" ]]; then

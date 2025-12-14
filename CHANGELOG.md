@@ -2,6 +2,13 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
+## [4.1.17](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.17) - 2025-10-07
+### Bug Fixes and Improvements
+
+- Add cm5 as pi5 alternative ([#317](https://github.com/mainsail-crew/crowsnest/pull/317))
+- Fix apt failed message redirecting to Discord ([#319](https://github.com/mainsail-crew/crowsnest/pull/319))
+- Fix branch for trixie ([#318](https://github.com/mainsail-crew/crowsnest/pull/318))
+
 ## [4.1.16](https://github.com/mainsail-crew/crowsnest/releases/tag/v4.1.16) - 2025-08-16
 ### Bug Fixes and Improvements
 
