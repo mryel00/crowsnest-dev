@@ -41,7 +41,7 @@ if [ "$#" -eq 0 ]; then
 fi
 
 ## Parse Args
-while getopts ":vhc:s:d" arg; do
+while getopts ":vhce:s:d" arg; do
     case "${arg}" in
         v )
             echo -e "\ncrowsnest Version: $(self_version)\n"
