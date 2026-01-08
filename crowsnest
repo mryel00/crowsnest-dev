@@ -26,7 +26,7 @@ function missing_args_msg {
 
 function check_cfg {
     if [ ! -r "${1}" ]; then
-        log_msg "ERROR: No Configuration File found. Exiting!"
+        echo "ERROR: No Configuration File found. Exiting!" >$2
         exit 1
     else
         return 0
