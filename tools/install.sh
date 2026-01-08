@@ -25,6 +25,12 @@ set -Ee
 SRC_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 [[ -n "${CROWSNEST_UNATTENDED}" ]] || CROWSNEST_UNATTENDED="0"
 
+### Crowsnest Dependencies
+# shellcheck disable=SC2034
+PKGLIST="curl crudini python3 python3-venv"
+# shellcheck disable=SC2034
+PKGLIST_PI="python3-libcamera"
+
 main() {
     . "${SRC_DIR}/libs/helper_fn.sh"
     . "${SRC_DIR}/libs/config.sh"
