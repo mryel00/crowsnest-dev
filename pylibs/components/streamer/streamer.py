@@ -12,19 +12,6 @@ from ... import logger, utils
 from ..section import Section
 
 
-class Resolution:
-    def __init__(self, value: str) -> None:
-        try:
-            self.width, self.height = value.split("x")
-        except ValueError:
-            raise ValueError(
-                "Custom Error", f"'{value}' is not of format '<width>x<height>'!"
-            )
-
-    def __str__(self) -> str:
-        return "x".join([self.width, self.height])
-
-
 class Streamer(Section, ABC):
     section_name = "cam"
     binary_names = []
