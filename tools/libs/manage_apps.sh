@@ -47,9 +47,6 @@ fi
 : "${BASE_USER:=${SUDO_USER:-${USER}}}"
 VENV="/home/${BASE_USER}/crowsnest-env"
 
-install_ustreamer_dependencies() {
-}
-
 clone_ustreamer() {
     ## remove bin/ustreamer if exist
     if [[ -d bin/ustreamer ]]; then
@@ -144,7 +141,7 @@ install_apps() {
         msg "We do not support your Distro with the Mainsail apt repository."
         msg "Trying to install ustreamer manually."
         msg "Installing build dependencies ..."
-        install_ustreamer_dependencies
+        apt-get --yes --no-install-recommends install "${PKGLIST_USTREAMER}" || return 1
         msg "Cloning ustreamer repository ..."
         clone_ustreamer
         msg "Building ustreamer ..."
