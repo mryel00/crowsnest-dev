@@ -19,7 +19,7 @@ set -Ee
 # Debug
 # set -x
 
-TOOLS_LIB_DIR="$(dirname "$(readlink -f "${0}")")"
+TOOLS_LIB_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 . "${TOOLS_LIB_DIR}/libs/helper_fn.sh"
 . "${TOOLS_LIB_DIR}/libs/messages.sh"
 
