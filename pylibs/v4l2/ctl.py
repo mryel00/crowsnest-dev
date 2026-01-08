@@ -169,7 +169,7 @@ def get_control_cur_value(device_path: str, control: str) -> int:
     Get the current value of a control of a given device
     """
     qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][utils.name2var(control)]["qc"]
-    return get_control_cur_value_with_qc(device_path, qc, control)
+    return get_control_cur_value_with_qc(device_path, qc)
 
 
 def get_control_cur_value_with_qc(
