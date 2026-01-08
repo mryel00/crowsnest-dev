@@ -20,7 +20,9 @@ set -Ee
 # set -x
 
 TOOLS_LIB_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+# shellcheck disable=SC1091
 . "${TOOLS_LIB_DIR}/libs/helper_fn.sh"
+# shellcheck disable=SC1091
 . "${TOOLS_LIB_DIR}/libs/messages.sh"
 
 # Ustreamer repo
