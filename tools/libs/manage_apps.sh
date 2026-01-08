@@ -47,6 +47,10 @@ fi
 : "${BASE_USER:=${SUDO_USER:-${USER}}}"
 VENV="/home/${BASE_USER}/crowsnest-env"
 
+install_ustreamer_dependencies() {
+    USTREAMER_PKGLIST="git build-essential libevent-dev libjpeg-dev libbsd-dev pkg-config"
+}
+
 clone_ustreamer() {
     ## remove bin/ustreamer if exist
     if [[ -d bin/ustreamer ]]; then
@@ -140,8 +144,11 @@ install_apps() {
     if [[ "$(install_apt_sources)" = "0" ]]; then
         msg "We do not support your Distro with the Mainsail apt repository."
         msg "Trying to install ustreamer manually."
+        msg "Installing build dependencies ..."
+        install_ustreamer_dependencies
         msg "Cloning ustreamer repository ..."
         clone_ustreamer
+        msg "Building ustreamer ..."
         build_ustreamer
     else
         msg "Install streamer apps ..."

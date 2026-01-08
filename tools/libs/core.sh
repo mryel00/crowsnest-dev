@@ -20,22 +20,8 @@ set -Ee
 # set -x
 
 ## Funcs
-get_os_version() {
-    if [[ -n "${1}" ]]; then
-        grep -c "${1}" /etc/os-release &> /dev/null && echo "1" || echo "0"
-    fi
-}
-
 get_host_arch() {
     uname -m
-}
-
-test_load_module() {
-    if modprobe -n "${1}" &> /dev/null; then
-        echo 1
-    else
-        echo 0
-    fi
 }
 
 source_pkglist_file() {
