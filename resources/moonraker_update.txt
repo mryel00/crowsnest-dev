@@ -6,4 +6,4 @@ primary_branch: pynest
 managed_services: crowsnest
 system_dependencies: system-dependencies.json
 virtualenv: ~/crowsnest-env
-requiremens: requirements.txt
+requirements: requirements.txt
