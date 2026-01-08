@@ -44,18 +44,11 @@ source_pkglist_file() {
 }
 
 install_dependencies() {
-    local dep
-    local -a pkg
-    pkg=()
-    for dep in ${PKGLIST}; do
-        pkg+=("${dep}")
-    done
+    local pkgs="${PKGLIST}"
     if [[ "$(use_pi_specifics)" = "1" ]]; then
-        for dep in ${PKGLIST_PI}; do
-            pkg+=("${dep}")
-        done
+        pkgs+=" ${PKGLIST_PI}"
     fi
-    apt-get --yes --no-install-recommends install "${pkg[@]}" || return 1
+    apt-get --yes --no-install-recommends install "${pkgs}" || return 1
 }
 
 create_filestructure() {
