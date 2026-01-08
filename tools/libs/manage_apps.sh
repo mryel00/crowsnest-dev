@@ -48,7 +48,6 @@ fi
 VENV="/home/${BASE_USER}/crowsnest-env"
 
 install_ustreamer_dependencies() {
-    USTREAMER_PKGLIST="git build-essential libevent-dev libjpeg-dev libbsd-dev pkg-config"
 }
 
 clone_ustreamer() {
