@@ -197,7 +197,7 @@ delete_runtime_env() {
 
 reinstall_runtime_env() {
     delete_runtime_env
-    install_runtime_env
+    setup_runtime_env
 }
 
 main() {
