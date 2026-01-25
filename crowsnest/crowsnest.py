@@ -157,7 +157,7 @@ async def main():
 
     logging_helper.log_host_info()
     logging_helper.log_streamer()
-    logging_helper.log_config(args.config)
+    logging_helper.log_config(args.config_path)
     logging_helper.log_cams()
 
     task1 = asyncio.create_task(start_sections(config))
