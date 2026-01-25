@@ -38,7 +38,7 @@ class Camera_Streamer(Streamer):
 
         streamer_args = [
             "--camera-path=" + device,
-            # '--http-listen=' + host,
+            "--http-listen=" + host,
             "--http-port=" + str(port),
             "--camera-fps=" + str(fps),
             "--camera-width=" + width,
