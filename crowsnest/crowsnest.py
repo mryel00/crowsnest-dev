@@ -4,32 +4,15 @@ import argparse
 import asyncio
 import configparser
 import signal
+import time
 import traceback
 
-from pylibs import logger, logging_helper, utils, watchdog
-from pylibs.components.crowsnest import Crowsnest
-
-parser = argparse.ArgumentParser(
-    prog="Crowsnest",
-    description="Crowsnest - A webcam daemon for Raspberry Pi OS distributions like MainsailOS",
-)
-config = configparser.ConfigParser(
-    inline_comment_prefixes="#",
-    converters={
-        "loglevel": utils.log_level_converter,
-        "resolution": utils.resolution_converter,
-    },
-)
-
-parser.add_argument("-c", "--config", help="Path to config file", required=True)
-parser.add_argument("-l", "--log_path", help="Path to log file", required=True)
-
-args = parser.parse_args()
+from crowsnest import logger, logging_helper, utils, watchdog
+from crowsnest.components.crowsnest import Crowsnest
 
 
-def initial_parse_config():
-    global crowsnest, config, args
-    config_path = args.config
+def initial_parse_config(config_path):
+    global crowsnest, config
     try:
         config.read(config_path)
     except configparser.ParsingError as e:
@@ -112,12 +95,55 @@ def exit_gracefully(signum, frame):
     pass
 
 
+def check_uptime_and_sleep(sleep_time):
+    if sleep_time <= 0:
+        return
+    try:
+        with open("/proc/uptime", "r") as f:
+            uptime_seconds = float(f.readline().split()[0])
+
+        if uptime_seconds < 120:
+            time.sleep(sleep_time)
+    except (IOError, ValueError):
+        logger.log_error(
+            "Couldn't properly read /proc/uptime! Skipping sleep! Please report this!"
+        )
+
+
 async def main():
-    global args, crowsnest
+    global crowsnest
+
+    parser = argparse.ArgumentParser(
+        prog="Crowsnest",
+        description="Crowsnest - A webcam daemon for Raspberry Pi OS distributions like MainsailOS",
+    )
+    config = configparser.ConfigParser(
+        inline_comment_prefixes="#",
+        converters={
+            "loglevel": utils.log_level_converter,
+            "resolution": utils.resolution_converter,
+        },
+    )
+
+    parser.add_argument(
+        "-c", "--config", help="Path to config file", type=str, required=True
+    )
+    parser.add_argument(
+        "-l", "--log_path", help="Path to log file", type=str, required=True
+    )
+    parser.add_argument(
+        "-s", "--sleep_boot", help="Sleep after system boot", type=int, default=0
+    )
+
+    args = parser.parse_args()
+
     logger.setup_logging(args.log_path)
+
+    check_uptime_and_sleep(args.sleep_boot)
+
     logging_helper.log_initial()
 
-    initial_parse_config()
+    initial_parse_config(args.config)
 
     if crowsnest is None:
         logger.log_error("Something went terribly wrong!")
@@ -142,11 +168,3 @@ async def main():
     await task1
     if task2:
         task2.cancel()
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    try:
-        loop.run_until_complete(main())
-    finally:
-        loop.close()
