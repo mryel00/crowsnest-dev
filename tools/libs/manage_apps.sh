@@ -21,9 +21,9 @@ set -Ee
 
 TOOLS_LIB_DIR="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
 # shellcheck disable=SC1091
-. "${TOOLS_LIB_DIR}/libs/helper_fn.sh"
+. "${TOOLS_LIB_DIR}/helper_fn.sh"
 # shellcheck disable=SC1091
-. "${TOOLS_LIB_DIR}/libs/messages.sh"
+. "${TOOLS_LIB_DIR}/messages.sh"
 
 # Ustreamer repo
 if [[ -z "${CROWSNEST_USTREAMER_REPO_SHIP}" ]]; then
