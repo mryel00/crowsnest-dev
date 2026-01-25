@@ -121,22 +121,16 @@ def fract2fps(fract: raw.v4l2_fract) -> str:
 def frmsize_to_str(frmsize: raw.v4l2_frmsizeenum) -> str:
     string = f"Size: {frmtype2s(frmsize.type)} "
     if frmsize.type == constants.V4L2_FRMSIZE_TYPE_DISCRETE:
-        string += "%dx%d" % (frmsize.discrete.width, frmsize.discrete.height)
+        string += f"{frmsize.discrete.width}x{frmsize.discrete.height}"
     elif frmsize.type == constants.V4L2_FRMSIZE_TYPE_CONTINUOUS:
-        string += "%dx%d - %dx%d" % (
-            frmsize.stepwise.min_width,
-            frmsize.stepwise.min_height,
-            frmsize.stepwise.max_width,
-            frmsize.stepwise.max_height,
-        )
+        sw = frmsize.stepwise
+        string += f"{sw.min_width}x{sw.min_height} - {sw.max_width}x{sw.max_height}"
     elif frmsize.type == constants.V4L2_FRMSIZE_TYPE_STEPWISE:
-        string += "%ss - %ss with step %ss (%s-%s fps)" % (
-            frmsize.stepwise.min_width,
-            frmsize.stepwise.min_height,
-            frmsize.stepwise.max_width,
-            frmsize.stepwise.max_height,
-            frmsize.stepwise.step_width,
-            frmsize.stepwise.step_height,
+        sw = frmsize.stepwise
+        string += (
+            f"{sw.min_width}x{sw.min_height} - "
+            f"{sw.max_width}x{sw.max_height} "
+            f"with step {sw.step_width}/{sw.step_height}"
         )
     return string
 
