@@ -3,7 +3,7 @@
 import asyncio
 from configparser import SectionProxy
 
-from ... import camera, logger, utils
+from ... import camera, utils
 from .streamer import Streamer
 
 

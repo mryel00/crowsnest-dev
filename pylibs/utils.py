@@ -8,7 +8,7 @@ import subprocess
 from configparser import SectionProxy
 from typing import Any, Callable, Optional
 
-from . import logger, v4l2
+from . import logger
 
 
 # Dynamically import functions
