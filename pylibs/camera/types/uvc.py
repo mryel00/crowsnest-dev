@@ -6,10 +6,10 @@ from .. import camera
 
 class UVC(camera.Camera):
     def __init__(self, path: str, *args, **kwargs) -> None:
+        super().__init__(path, *args, **kwargs)
         self.path_by_path = None
         self.path_by_id = None
         if path.startswith("/dev/video"):
-            self.path = path
             if kwargs.get("other"):
                 self.path_by_path = kwargs["other"][0]
                 self.path_by_id = kwargs["other"][1]
@@ -18,7 +18,6 @@ class UVC(camera.Camera):
             self.path_by_id = path
         self.query_controls = v4l2.ctl.get_query_controls(self.path)
 
-        self.control_values = {}
         cur_sec = ""
         for name, qc in self.query_controls.items():
             parsed_qc = v4l2.ctl.parse_qc_of_path(self.path, qc)
