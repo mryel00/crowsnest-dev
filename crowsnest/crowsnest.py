@@ -7,12 +7,12 @@ import signal
 import time
 import traceback
 
+import crowsnest
 from crowsnest import logger, logging_helper, utils, watchdog
 from crowsnest.components.crowsnest import Crowsnest
 
 
-def initial_parse_config(config_path):
-    global crowsnest, config
+def initial_parse_config(config_path, config):
     try:
         config.read(config_path)
     except configparser.ParsingError as e:
@@ -25,10 +25,11 @@ def initial_parse_config(config_path):
     if crowsnest is None or not crowsnest.initialized:
         logger.log_error("Failed to parse config for '[crowsnest]' section! Exiting...")
         exit(1)
+    return crowsnest
 
 
-async def start_sections():
-    global config, sect_exec_tasks
+async def start_sections(config):
+    global sect_exec_tasks
     sect_objs = []
     sect_exec_tasks = set()
 
@@ -111,8 +112,6 @@ def check_uptime_and_sleep(sleep_time):
 
 
 async def main():
-    global crowsnest
-
     parser = argparse.ArgumentParser(
         prog="Crowsnest",
         description="Crowsnest - A webcam daemon for Raspberry Pi OS distributions like MainsailOS",
@@ -126,7 +125,7 @@ async def main():
     )
 
     parser.add_argument(
-        "-c", "--config", help="Path to config file", type=str, required=True
+        "-c", "--config_path", help="Path to config file", type=str, required=True
     )
     parser.add_argument(
         "-l", "--log_path", help="Path to log file", type=str, required=True
@@ -143,7 +142,7 @@ async def main():
 
     logging_helper.log_initial()
 
-    initial_parse_config(args.config)
+    crowsnest = initial_parse_config(args.config_path, config)
 
     if crowsnest is None:
         logger.log_error("Something went terribly wrong!")
@@ -161,7 +160,7 @@ async def main():
     logging_helper.log_config(args.config)
     logging_helper.log_cams()
 
-    task1 = asyncio.create_task(start_sections())
+    task1 = asyncio.create_task(start_sections(config))
     await asyncio.sleep(0)
     task2 = asyncio.create_task(watchdog.run_watchdog())
 
