@@ -10,7 +10,7 @@ import ctypes
 from typing import TYPE_CHECKING, Type, Union
 
 """
-This module contains of Python port of the macros avaialble in
+This module contains of Python port of the macros available in
 "/include/uapi/asm-generic/ioctl.h" from the linux kernel.
 """
 
