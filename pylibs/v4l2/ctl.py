@@ -228,22 +228,22 @@ def get_formats(device_path: str) -> dict:
         fmt.type = constants.V4L2_BUF_TYPE_VIDEO_CAPTURE
         formats = {}
         for fmt in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FMT, fmt):
-            str = f"[{fmt.index}]: '{utils.fcc2s(fmt.pixelformat)}' ({fmt.description.decode()}"
+            format_str = f"[{fmt.index}]: '{utils.fcc2s(fmt.pixelformat)}' ({fmt.description.decode()}"
             if fmt.flags:
-                str += f", {utils.fmtflags2str(fmt.flags)}"
-            str += ")"
-            formats[str] = {}
+                format_str += f", {utils.fmtflags2str(fmt.flags)}"
+            format_str += ")"
+            formats[format_str] = {}
             frmsize.pixel_format = fmt.pixelformat
             for size in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FRAMESIZES, frmsize):
                 size_str = utils.frmsize_to_str(size)
-                formats[str][size_str] = []
+                formats[format_str][size_str] = []
                 frmival.pixel_format = fmt.pixelformat
                 frmival.width = frmsize.discrete.width
                 frmival.height = frmsize.discrete.height
                 for interval in utils.ioctl_iter(
                     fd, raw.VIDIOC_ENUM_FRAMEINTERVALS, frmival
                 ):
-                    formats[str][size_str].append(utils.frmival_to_str(interval))
+                    formats[format_str][size_str].append(utils.frmival_to_str(interval))
         os.close(fd)
         return formats
     except FileNotFoundError:
