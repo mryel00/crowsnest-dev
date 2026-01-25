@@ -63,7 +63,7 @@ class Streamer(Section, ABC):
 
 
 def load_all_streamers() -> None:
-    streamer_path = "pylibs/components/streamer"
+    streamer_path = "crowsnest/components/streamer"
     streamer_files = [
         f
         for f in listdir(streamer_path)

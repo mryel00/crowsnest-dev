@@ -23,7 +23,7 @@ class Cam(Section):
             self.parameters["mode"],
             self.name,
             config_section,
-            path="pylibs.components.streamer",
+            path="crowsnest.components.streamer",
         )
         if component is None or not isinstance(component, Streamer):
             self.log_error(f"Tried to load a component that is not a Streamer!")

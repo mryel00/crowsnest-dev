@@ -5,7 +5,7 @@ import re
 from configparser import SectionProxy
 from typing import Optional
 
-from pylibs.camera.types.uvc import UVC
+from crowsnest.camera.types.uvc import UVC
 
 from ... import camera, logger, utils
 from .streamer import Streamer

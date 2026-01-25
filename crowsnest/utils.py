@@ -14,14 +14,17 @@ from . import logger
 # Dynamically import functions
 # Requires module to have a function with function_name
 def load_function(
-    function_name: str, module_name: str, path="pylibs.components"
+    function_name: str, module_name: str, path="crowsnest.components"
 ) -> Callable[..., Any]:
     module = importlib.import_module(f"{path}.{module_name}")
     return getattr(module, function_name)
 
 
 def load_component(
-    module_name: str, name: str, config_section: SectionProxy, path="pylibs.components"
+    module_name: str,
+    name: str,
+    config_section: SectionProxy,
+    path="crowsnest.components",
 ) -> Optional[Any]:
     try:
         return load_function("load_component", module_name, path)(name, config_section)
@@ -32,7 +35,7 @@ def load_component(
     return None
 
 
-def load_streamer(module_name: str, path="pylibs.components") -> Optional[Any]:
+def load_streamer(module_name: str, path="crowsnest.components") -> Optional[Any]:
     try:
         return load_function("load_streamer", module_name, path)()
     except (ModuleNotFoundError, AttributeError) as e:
