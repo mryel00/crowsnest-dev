@@ -12,7 +12,6 @@ Description=crowsnest - Multi Webcam/Streamer Control Deamon
 Documentation=https://github.com/mainsail-crew/crowsnest
 After=udev.service network-online.target nss-lookup.target
 Wants=udev.service network-online.target
-Before=nginx.service
 StartLimitBurst=3
 StartLimitIntervalSec=180
 
