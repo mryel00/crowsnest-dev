@@ -131,7 +131,11 @@ async def main():
         "-l", "--log_path", help="Path to log file", type=str, required=True
     )
     parser.add_argument(
-        "-s", "--sleep_boot", help="Sleep after system boot", type=int, default=0
+        "-s",
+        "--sleep_boot",
+        help="Delay start (in seconds) after system boot",
+        type=int,
+        default=0,
     )
 
     args = parser.parse_args()
