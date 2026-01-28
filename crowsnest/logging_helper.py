@@ -25,8 +25,9 @@ def log_host_info():
 
     ### OS Infos
     # OS Version
-    distribution = utils.grep("/etc/os-release", "PRETTY_NAME")
-    distribution = distribution.strip().split("=")[1].strip('"')
+    distribution = utils.grep("/etc/os-release", "PRETTY_NAME").strip()
+    _, _, distribution = distribution.partition("=")
+    distribution = distribution.strip('"') or "Unknown"
     logger.log_info_silent(f"Distribution: {distribution}", log_pre)
 
     # Release Version of MainsailOS (if file present)
@@ -60,7 +61,9 @@ def log_host_info():
     logger.log_info_silent(f"Available CPU Cores: {cpu_count}", log_pre)
 
     # Avail mem
-    memtotal = utils.grep("/proc/meminfo", "MemTotal:").split(":")[1].strip()
+    memtotal = utils.grep("/proc/meminfo", "MemTotal:")
+    _, _, memtotal = memtotal.partition(":")
+    memtotal = memtotal.strip() or "Unknown"
     logger.log_info_silent(f"Available Memory: {memtotal}", log_pre)
 
     # Avail disk size
