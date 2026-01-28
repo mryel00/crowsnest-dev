@@ -39,6 +39,8 @@ async def start_sections(config):
     # Catches SIGINT and SIGTERM to exit gracefully and cancel all tasks
     signal.signal(signal.SIGINT, exit_gracefully)
     signal.signal(signal.SIGTERM, exit_gracefully)
+    if hasattr(signal, "SIGHUP"):
+        signal.signal(signal.SIGHUP, exit_gracefully)
 
     try:
         if not len(config.sections()) > 1:
