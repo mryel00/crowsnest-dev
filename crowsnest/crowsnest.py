@@ -25,6 +25,9 @@ def initial_parse_config(config_path, config):
     if crowsnest is None or not crowsnest.initialized:
         logger.log_error("Failed to parse config for '[crowsnest]' section! Exiting...")
         exit(1)
+
+    # We don't need the section anymore so remove it
+    config.remove_section("crowsnest")
     return crowsnest
 
 
@@ -46,10 +49,6 @@ async def start_sections(config):
             section_header = section.split(" ")
             section_object = None
             section_keyword = section_header[0]
-
-            # Skip crowsnest section
-            if section_keyword == "crowsnest":
-                continue
 
             log_prefix = f"[{section}]: "
             section_name = " ".join(section_header[1:])
