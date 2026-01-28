@@ -42,11 +42,12 @@ async def start_sections(config):
     if hasattr(signal, "SIGHUP"):
         signal.signal(signal.SIGHUP, exit_gracefully)
 
+    if len(config.sections()) <= 0:
+        logger.log_quiet("No Cams / Services to start! Exiting ...")
+        return
+    logger.log_quiet("Try to parse configured Cams / Services...")
+
     try:
-        if not len(config.sections()) > 1:
-            logger.log_quiet("No Cams / Services to start! Exiting ...")
-            return
-        logger.log_quiet("Try to parse configured Cams / Services...")
         for section in config.sections():
             section_header = section.split(" ")
             section_object = None
