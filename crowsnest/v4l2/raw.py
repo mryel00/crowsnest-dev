@@ -37,7 +37,7 @@ class v4l2_queryctrl(ctypes.Structure):
     _fields_ = [
         ("id", ctypes.c_uint32),
         ("type", ctypes.c_uint32),
-        ("name", ctypes.c_char * 8),
+        ("name", ctypes.c_char * 32),
         ("minimum", ctypes.c_int32),
         ("maximum", ctypes.c_int32),
         ("step", ctypes.c_int32),

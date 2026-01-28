@@ -57,10 +57,8 @@ def parse_qc_of_path(device_path: str, qc: raw.v4l2_query_ext_ctrl) -> dict:
     Parses the query control to an easy to use dictionary
     """
     try:
-        fd = os.open(device_path, os.O_RDWR)
-        controls = parse_qc(fd, qc)
-        os.close(fd)
-        return controls
+        with open(device_path, "r+") as f:
+            return parse_qc(f.fileno(), qc)
     except FileNotFoundError:
         return {}
 
@@ -125,8 +123,8 @@ def get_dev_ctl(device_path: str) -> Optional[dict]:
 
 
 def get_dev_ctl_parsed_dict(device_path: str) -> dict:
-    if device_path not in dev_ctls:
-        init_device(device_path)
+    if device_path not in dev_ctls and not init_device(device_path):
+        return {}
     return utils.ctl_to_parsed_dict(dev_ctls[device_path])
 
 
@@ -138,7 +136,8 @@ def get_dev_path_by_name(name: str) -> str:
     for dev in os.listdir("/dev"):
         if dev.startswith(prefix) and dev[len(prefix) :].isdigit():
             path = f"/dev/{dev}"
-            if name in get_camera_capabilities(path).get("card"):
+            card = get_camera_capabilities(path).get("card", "")
+            if name in card:
                 return path
     return ""
 
@@ -193,7 +192,8 @@ def set_control(device_path: str, control: str, value: int) -> bool:
     """
     Set the value of a control of a given device
     """
-    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][control]["qc"]
+    key = utils.name2var(control)
+    qc: raw.v4l2_query_ext_ctrl = dev_ctls[device_path][key]["qc"]
     return set_control_with_qc(device_path, qc, value)
 
 
