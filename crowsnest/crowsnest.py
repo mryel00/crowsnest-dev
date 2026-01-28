@@ -94,7 +94,9 @@ async def start_sections(config):
 
 
 def exit_gracefully(signum, frame):
-    pass
+    # We just log the exit
+    # Childs will get same signal and trigger the except/finally block
+    logger.log_quiet(f"Received signal {signum}. Shutting down...")
 
 
 def check_uptime_and_sleep(sleep_time):
