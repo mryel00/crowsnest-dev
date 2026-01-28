@@ -134,7 +134,7 @@ install_venv() {
         msg "Python venv already exists."
         delete_venv
     fi
-    python3 -m venv --system-site-packages "${VENV}"
+    sudo -u "${BASE_USER}" python3 -m venv --system-site-packages "${VENV}"
 }
 
 install_apps() {
