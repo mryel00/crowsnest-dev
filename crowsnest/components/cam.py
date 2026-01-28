@@ -31,6 +31,8 @@ class Cam(Section):
         self.streamer: Streamer = component
 
     def check_config_section(self, config_section: SectionProxy) -> bool:
+        if not hasattr(self, "streamer"):
+            return False
         return self.streamer.initialized
 
     async def execute(self, lock: asyncio.Lock) -> Optional[asyncio.subprocess.Process]:
