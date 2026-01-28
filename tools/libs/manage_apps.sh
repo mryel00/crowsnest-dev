@@ -34,6 +34,10 @@ if [[ -z "${CROWSNEST_USTREAMER_REPO_BRANCH}" ]]; then
 fi
 USTREAMER_PATH="bin/ustreamer"
 
+# These are install dependencies for manual building
+# shellcheck disable=SC2034
+PKGLIST_USTREAMER="git build-essential libevent-dev libjpeg-dev libbsd-dev pkg-config"
+
 # Paths of repos
 ALL_PATHS=(
     "${USTREAMER_PATH}"

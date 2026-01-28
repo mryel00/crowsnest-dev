@@ -30,8 +30,6 @@ SRC_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 PKGLIST="curl crudini python3 python3-venv"
 # shellcheck disable=SC2034
 PKGLIST_PI="python3-libcamera"
-# shellcheck disable=SC2034
-PKGLIST_USTREAMER="git build-essential libevent-dev libjpeg-dev libbsd-dev pkg-config"
 
 main() {
     . "${SRC_DIR}/libs/helper_fn.sh"
