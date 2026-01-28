@@ -3,6 +3,7 @@
 import asyncio
 import importlib
 import os
+import shlex
 import shutil
 import subprocess
 from configparser import SectionProxy
@@ -60,9 +61,9 @@ async def execute_command(
     info_log_pre="",
     error_log_pre="",
 ):
-
-    process = await asyncio.create_subprocess_shell(
-        command, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
+    args = shlex.split(command)
+    process = await asyncio.create_subprocess_exec(
+        *args, stdout=asyncio.subprocess.PIPE, stderr=asyncio.subprocess.PIPE
     )
 
     stdout_task = asyncio.create_task(
@@ -77,7 +78,7 @@ async def execute_command(
 
 def execute_shell_command(command: str, strip: bool = True) -> str:
     try:
-        output = subprocess.check_output(command, shell=True).decode("utf-8")
+        output = subprocess.check_output(shlex.split(command)).decode("utf-8")
         if strip:
             output = output.strip()
         return output
