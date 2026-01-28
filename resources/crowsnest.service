@@ -24,6 +24,6 @@ User=%USER%
 RemainAfterExit=Yes
 WorkingDirectory=/home/%USER%/crowsnest
 EnvironmentFile=%ENV%
-ExecStart=%PYTHON_VENV% $CROWSNEST_ARGS
+ExecStart=%PYTHON_VENV%/bin/python3 $CROWSNEST_ARGS
 Restart=on-failure
 RestartSec=30
