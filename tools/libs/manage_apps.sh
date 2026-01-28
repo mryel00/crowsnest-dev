@@ -132,7 +132,7 @@ install_venv() {
     msg "Setup python venv ..."
     if [[ -d "${VENV}" ]]; then
         msg "Python venv already exists."
-        remove_venv
+        delete_venv
     fi
     python3 -m venv --system-site-packages "${VENV}"
 }
