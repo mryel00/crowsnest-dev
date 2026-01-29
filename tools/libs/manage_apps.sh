@@ -51,7 +51,7 @@ else
 fi
 
 : "${BASE_USER:=${SUDO_USER:-${USER}}}"
-VENV="/home/${BASE_USER}/crowsnest-env"
+CROWSNEST_VENV_PATH="/home/${BASE_USER}/crowsnest-env"
 
 clone_ustreamer() {
     ## remove bin/ustreamer if exist
@@ -134,11 +134,11 @@ install_apt_streamer() {
 
 install_venv() {
     msg "Setup python venv ..."
-    if [[ -d "${VENV}" ]]; then
+    if [[ -d "${CROWSNEST_VENV_PATH}" ]]; then
         msg "Python venv already exists."
         delete_venv
     fi
-    sudo -u "${BASE_USER}" python3 -m venv --system-site-packages "${VENV}"
+    sudo -u "${BASE_USER}" python3 -m venv --system-site-packages "${CROWSNEST_VENV_PATH}"
 }
 
 install_apps() {
@@ -166,11 +166,11 @@ setup_runtime_env() {
 
 delete_venv() {
     msg "Deleting python venv ..."
-    if [[ -d "${VENV}" ]]; then
-        msg "Deleting '${VENV}' ... [DONE]"
-        rm -rf "${VENV}"
+    if [[ -d "${CROWSNEST_VENV_PATH}" ]]; then
+        msg "Deleting '${CROWSNEST_VENV_PATH}' ... [DONE]"
+        rm -rf "${CROWSNEST_VENV_PATH}"
     else
-        msg "'${VENV}' does not exist! Delete ... [SKIPPED]"
+        msg "'${CROWSNEST_VENV_PATH}' does not exist! Delete ... [SKIPPED]"
     fi
 }
 
