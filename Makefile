@@ -46,7 +46,7 @@ update: ## Update crowsnest (fetches and pulls repository changes)
 
 upgrade: ## Upgrade crowsnest from v4 to v5
 	@printf "Backup crowsnest.conf and moonraker.conf, then migrate them ...\n"
-	@MIGRATED_PATH="$$(bash -c 'tools/migrate_crowsnest_conf.sh')"; \
+	@MIGRATED_PATH="$$(bash -c 'tools/migrate_config.sh')"; \
 	if [ -n "$$MIGRATED_PATH" ]; then \
 		printf "%s\n" "$$MIGRATED_PATH" > tools/.migrated_conf_path; \
 		printf "Saved migrated config path to tools/.migrated_conf_path\n"; \
