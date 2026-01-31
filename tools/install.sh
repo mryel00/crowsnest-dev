@@ -146,7 +146,9 @@ main() {
     if [[ "${CROWSNEST_UNATTENDED}" = "0" ]]; then
         ask_update_entry
         goodbye_msg
-        ask_reboot
+        if [[ "${CROWSNEST_SKIP_REBOOT_PROMPT}" = "0" ]]; then
+            ask_reboot
+        fi
     elif [[ "${CROWSNEST_UNATTENDED}" = "1" ]]; then
         if [[ "${CROWSNEST_ADD_CROWSNEST_MOONRAKER}" = "1" ]]; then
             add_update_entry
