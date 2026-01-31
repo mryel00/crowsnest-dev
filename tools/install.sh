@@ -76,7 +76,6 @@ main() {
         detect_existing_webcamd
     fi
 
-    source_pkglist_file
     msg "Installing dependencies ...\n"
     if install_dependencies; then
         status_msg "Install dependencies ..." "0"

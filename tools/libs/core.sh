@@ -24,11 +24,6 @@ get_host_arch() {
     uname -m
 }
 
-source_pkglist_file() {
-    # shellcheck disable=SC1091
-    . "${SRC_DIR}/pkglist.sh"
-}
-
 install_dependencies() {
     local pkgs="${PKGLIST}"
     if [[ "$(use_pi_specifics)" = "1" ]]; then
