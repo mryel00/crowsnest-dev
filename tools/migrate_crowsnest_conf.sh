@@ -132,13 +132,11 @@ migrate_crudini() {
 
 
 if [[ "$1" == "--restore" ]]; then
-    local base_user
     if [[ -n "${SUDO_USER}" ]]; then
         base_user="${SUDO_USER}"
     else
         base_user="$(whoami)"
     fi
-    local user_home
     user_home=$(eval echo "~${base_user}")
 
     MIGRATED_BACKUP=$(find "${user_home}" -maxdepth 4 -type d -name "crowsnest" -prune -o -type f -name "${CONFIG_FILENAME}.v5" -print | head -n 1)
