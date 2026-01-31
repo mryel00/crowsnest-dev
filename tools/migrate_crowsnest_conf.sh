@@ -94,7 +94,7 @@ migrate_crudini() {
 
     sections=$(crudini --get --list "${cfg}")
 
-    for section in $sections; do
+    while IFS= read -r section; do
         if [[ "$section" != "crowsnest" ]] && [[ ! "$section" =~ ^cam\ .* ]]; then
             log_info "Removing unknown section: [${section}]"
             crudini --del "${cfg}" "${section}"
@@ -126,7 +126,7 @@ migrate_crudini() {
                 fi
             fi
         fi
-    done
+    done < <(crudini --get --list "${cfg}")
 }
 
 
