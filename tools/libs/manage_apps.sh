@@ -147,7 +147,7 @@ install_apps() {
         msg "We do not support your Distro with the Mainsail apt repository."
         msg "Trying to install ustreamer manually."
         msg "Installing build dependencies ..."
-        apt-get --yes --no-install-recommends install "${PKGLIST_USTREAMER}" || return 1
+        apt-get --yes --no-install-recommends install ${PKGLIST_USTREAMER} || return 1
         msg "Cloning ustreamer repository ..."
         clone_ustreamer
         msg "Building ustreamer ..."
