@@ -17,15 +17,15 @@ CONFIG_FILENAME="crowsnest.conf"
 # --- Functions ---
 
 log_info() {
-    echo -e "\e[32m[INFO]\e[0m $1"
+    echo -e "\e[32m[INFO]\e[0m $1" >&2
 }
 
 log_warn() {
-    echo -e "\e[33m[WARN]\e[0m $1"
+    echo -e "\e[33m[WARN]\e[0m $1" >&2
 }
 
 log_error() {
-    echo -e "\e[31m[ERROR]\e[0m $1"
+    echo -e "\e[31m[ERROR]\e[0m $1" >&2
 }
 
 find_config() {
@@ -130,31 +130,6 @@ migrate_crudini() {
     done < <(crudini --get --list "${cfg}")
 }
 
-
-if [[ "$1" == "--restore" ]]; then
-    if [[ -n "${SUDO_USER}" ]]; then
-        base_user="${SUDO_USER}"
-    else
-        base_user="$(whoami)"
-    fi
-    user_home=$(eval echo "~${base_user}")
-
-    MIGRATED_BACKUP=$(find "${user_home}" -maxdepth 4 -type d -name "crowsnest" -prune -o -type f -name "${CONFIG_FILENAME}.v5" -print | head -n 1)
-
-    if [[ -n "${MIGRATED_BACKUP}" ]]; then
-        # Target is the original filename without .v5
-        TARGET_CONFIG="${MIGRATED_BACKUP%.v5}"
-
-        log_info "Restoring migrated config from ${MIGRATED_BACKUP} to ${TARGET_CONFIG}"
-        mv "${MIGRATED_BACKUP}" "${TARGET_CONFIG}"
-        log_info "Restore complete."
-        exit 0
-    else
-        log_warn "No migrated config found to restore."
-        exit 0
-    fi
-fi
-
 CONFIG_PATH=$(find_config) || exit 1
 MIGRATED_TEMP="${CONFIG_PATH}.v5"
 
@@ -172,3 +147,5 @@ migrate_crudini "${CONFIG_PATH}"
 mv "${CONFIG_PATH}" "${MIGRATED_TEMP}"
 
 log_info "Migration complete."
+
+echo "${MIGRATED_TEMP}"

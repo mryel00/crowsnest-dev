@@ -46,7 +46,13 @@ update: ## Update crowsnest (fetches and pulls repository changes)
 
 upgrade: ## Upgrade crowsnest from v4 to v5
 	@printf "Backup crowsnest.conf and migrate it ...\n"
-	@bash -c 'tools/migrate_crowsnest_conf.sh'
+	@MIGRATED_PATH="$$(bash -c 'tools/migrate_crowsnest_conf.sh')"; \
+	if [ -n "$$MIGRATED_PATH" ]; then \
+		printf "%s\n" "$$MIGRATED_PATH" > tools/.migrated_conf_path; \
+		printf "Saved migrated config path to tools/.migrated_conf_path\n"; \
+	else \
+		printf "No migrated config path returned\n"; \
+	fi
 	@printf "Uninstalling crowsnest v4 ...\n"
 	@yes | bash -c 'tools/uninstall.sh'
 	@printf "Updating repository ...\n"
@@ -56,7 +62,15 @@ upgrade: ## Upgrade crowsnest from v4 to v5
 	@printf "Installing crowsnest v5 ...\n"
 	@sudo env CROWSNEST_SKIP_REBOOT_PROMPT=1 bash -c 'tools/install.sh'
 	@printf "Restoring migrated crowsnest.conf ...\n"
-	@bash -c 'tools/migrate_crowsnest_conf.sh --restore'
+	@if [ -f tools/.migrated_conf_path ]; then \
+		MIGRATED_PATH="$$(cat tools/.migrated_conf_path)"; \
+		ORIG_PATH="$${MIGRATED_PATH%.v5}"; \
+		printf "Restoring %s -> %s\n" "$$MIGRATED_PATH" "$$ORIG_PATH"; \
+		mv "$$MIGRATED_PATH" "$$ORIG_PATH"; \
+		rm -f tools/.migrated_conf_path; \
+	else \
+		printf "No migrated config to restore\n"; \
+	fi
 
 report: ## Generate report.txt
 	@if [ -f ~/report.txt ]; then rm -f ~/report.txt; fi
