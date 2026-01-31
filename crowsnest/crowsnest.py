@@ -10,6 +10,7 @@ import traceback
 import crowsnest
 from crowsnest import logger, logging_helper, utils, watchdog
 from crowsnest.components.crowsnest import Crowsnest
+from crowsnest.components.streamer.streamer import Streamer
 
 
 def initial_parse_config(config_path, config):
@@ -26,6 +27,7 @@ def initial_parse_config(config_path, config):
         logger.log_error("Failed to parse config for '[crowsnest]' section! Exiting...")
         exit(1)
 
+    Streamer.global_no_proxy = crowsnest.parameters["no_proxy"]
     # We don't need the section anymore so remove it
     config.remove_section("crowsnest")
     return crowsnest

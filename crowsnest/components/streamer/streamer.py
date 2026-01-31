@@ -16,6 +16,7 @@ class Streamer(Section, ABC):
     section_name = "cam"
     binary_names = []
     binary_paths = []
+    global_no_proxy = False
 
     binaries = {}
     missing_bin_txt = textwrap.dedent(
@@ -36,7 +37,8 @@ class Streamer(Section, ABC):
                 "device": config_section.get("device", None),
                 "resolution": config_section.getresolution("resolution", None),
                 "max_fps": config_section.getint("max_fps", None),
-                "no_proxy": config_section.getboolean("no_proxy", False),
+                "no_proxy": config_section.getboolean("no_proxy", False)
+                or Streamer.global_no_proxy,
                 "custom_flags": config_section.get("custom_flags", ""),
                 "v4l2ctl": config_section.get("v4l2ctl", ""),
             }
