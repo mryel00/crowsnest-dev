@@ -155,7 +155,7 @@ install_apps() {
     else
         msg "Install streamer apps ..."
         install_apt_streamer
-        msg "Note: camera-streamer and spyglass are supposed to fail on non Raspberry Pi OS systems"
+        msg "Note: spyglass is supposed to fail on non Raspberry Pi OS systems"
     fi
 }
 
