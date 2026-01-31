@@ -12,7 +12,8 @@
 set -e
 
 # --- Configuration ---
-CONFIG_FILENAME="crowsnest.conf"
+CROWSNEST_CFG_NAME="crowsnest.conf"
+MOONRAKER_CFG_NAME="moonraker.conf"
 
 # --- Functions ---
 
@@ -66,14 +67,14 @@ find_config() {
     user_home=$(eval echo "~${base_user}")
 
     local found_config
-    found_config=$(find "${user_home}" -maxdepth 4 -type d -name "crowsnest" -prune -o -type f -name "${CONFIG_FILENAME}" -print | head -n 1)
+    found_config=$(find "${user_home}" -maxdepth 4 -type d -name "crowsnest" -prune -o -type f -name "${CROWSNEST_CFG_NAME}" -print | head -n 1)
 
     if [[ -n "${found_config}" ]]; then
         echo "${found_config}"
         return 0
     fi
 
-    log_error "Could not find ${CONFIG_FILENAME} in ${user_home} or an installed crowsnest.service."
+    log_error "Could not find ${CROWSNEST_CFG_NAME} in ${user_home} or an installed crowsnest.service."
     log_error "Skipping crowsnest.conf backup."
     return 1
 }
@@ -83,51 +84,57 @@ backup_config() {
     local cfg="$1"
     extension="$(date +%Y-%m-%d-%H%M)"
     cp "${cfg}" "${cfg}.${extension}"
+    cfg="${cfg%crowsnest.conf}moonraker.conf"
+    extension="$(date +%Y-%m-%d-%H%M)"
+    cp "${cfg}" "${cfg}.${extension}.bkp"
 }
 
 migrate_crudini() {
-    local cfg="$1"
+    local crowsnest_cfg="$1"
+    local moonraker_cfg="$2"
     local sections
     local val
 
     log_info "Using crudini for migration..."
 
-    sections=$(crudini --get --list "${cfg}")
+    sections=$(crudini --get --list "${crowsnest_cfg}")
 
     while IFS= read -r section; do
         if [[ "$section" != "crowsnest" ]] && [[ ! "$section" =~ ^cam\ .* ]]; then
             log_info "Removing unknown section: [${section}]"
-            crudini --del "${cfg}" "${section}"
+            crudini --del "${crowsnest_cfg}" "${section}"
             continue
         fi
 
         if [[ "$section" == "crowsnest" ]]; then
-            if crudini --get "${cfg}" "${section}" "log_path" >/dev/null 2>&1; then
+            if crudini --get "${crowsnest_cfg}" "${section}" "log_path" >/dev/null 2>&1; then
                 log_info "Removing log_path from [crowsnest]"
-                crudini --del "${cfg}" "${section}" "log_path"
+                crudini --del "${crowsnest_cfg}" "${section}" "log_path"
             fi
         fi
 
         if [[ "$section" =~ ^cam\ .* ]]; then
-            if crudini --get "${cfg}" "${section}" "enable_rtsp" >/dev/null 2>&1; then
+            if crudini --get "${crowsnest_cfg}" "${section}" "enable_rtsp" >/dev/null 2>&1; then
                 log_info "Removing enable_rtsp from [${section}]"
-                crudini --del "${cfg}" "${section}" "enable_rtsp"
+                crudini --del "${crowsnest_cfg}" "${section}" "enable_rtsp"
             fi
 
-            if crudini --get "${cfg}" "${section}" "rtsp_port" >/dev/null 2>&1; then
+            if crudini --get "${crowsnest_cfg}" "${section}" "rtsp_port" >/dev/null 2>&1; then
                 log_info "Removing rtsp_port from [${section}]"
-                crudini --del "${cfg}" "${section}" "rtsp_port"
+                crudini --del "${crowsnest_cfg}" "${section}" "rtsp_port"
             fi
 
-            if val=$(crudini --get "${cfg}" "${section}" "mode" 2>/dev/null); then
+            if val=$(crudini --get "${crowsnest_cfg}" "${section}" "mode" 2>/dev/null); then
                 val=$(echo "$val" | sed 's/[#;].*//' | xargs)
                 if [[ "$val" != "ustreamer" ]] && [[ "$val" != "camera-streamer" ]] && [[ "$val" != "spyglass" ]]; then
                     log_info "Updating invalid mode '$val' to 'ustreamer' in [${section}]"
-                    crudini --set "${cfg}" "${section}" "mode" "ustreamer"
+                    crudini --set "${crowsnest_cfg}" "${section}" "mode" "ustreamer"
                 fi
             fi
         fi
-    done < <(crudini --get --list "${cfg}")
+    done < <(crudini --get --list "${crowsnest_cfg}")
+
+    crudini --del "${moonraker_cfg}" "update_manager crowsnest"
 }
 
 cleanup_legacy_comments() {
@@ -136,21 +143,28 @@ cleanup_legacy_comments() {
     sed -i '/RTSP Stream URL:/,/^##*$/d' "${cfg}"
 }
 
-CONFIG_PATH=$(find_config) || exit 1
-MIGRATED_TEMP="${CONFIG_PATH}.v5"
+cleanup_moonraker_conf() {
+    local cfg="$1"
+    sed -i '/# Crowsnest update_manager entry/d' "${cfg}"
+}
+
+CROWSNEST_CFG_PATH=$(find_config) || exit 1
+MOONRAKER_CFG_PATH="${CROWSNEST_CFG_PATH%CROWSNEST_CFG_NAME}${MOONRAKER_CFG_NAME}"
+MIGRATED_TEMP="${CROWSNEST_CFG_PATH}.v5"
 
 if ! command -v crudini >/dev/null 2>&1; then
     log_error "crudini is required but not found. If it isn't installed, you most likely don't need to run this script."
     exit 1
 fi
 
-log_info "Found config at: ${CONFIG_PATH}"
+log_info "Found config at: ${CROWSNEST_CFG_PATH}"
 
-backup_config "${CONFIG_PATH}"
-migrate_crudini "${CONFIG_PATH}"
-cleanup_legacy_comments "${CONFIG_PATH}"
+backup_config "${CROWSNEST_CFG_PATH}" "${MOONRAKER_CFG_PATH}"
+migrate_crudini "${CROWSNEST_CFG_PATH}" "${MOONRAKER_CFG_PATH}"
+cleanup_legacy_comments "${CROWSNEST_CFG_PATH}"
+cleanup_moonraker_confg "${MOONRAKER_CFG_PATH}"
 
-mv "${CONFIG_PATH}" "${MIGRATED_TEMP}"
+mv "${CROWSNEST_CFG_PATH}" "${MIGRATED_TEMP}"
 
 log_info "Migration complete."
 
