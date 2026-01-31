@@ -1,8 +1,13 @@
 #!/usr/bin/env bash
 
-# This script migrates crowsnest.conf to a newer format.
-# It creates a backup, removes deprecated options, cleans up sections,
-# and ensures modes are valid.
+#### crowsnest - A webcam Service for multiple Cams and Stream Services.
+####
+#### Written by Patrick Gehrsitz aka mryel00 <mryel00.github@gmail.com>
+#### Copyright 2025 - till today
+#### https://github.com/mainsail-crew/crowsnest
+####
+#### This File is distributed under GPLv3
+####
 
 set -e
 
