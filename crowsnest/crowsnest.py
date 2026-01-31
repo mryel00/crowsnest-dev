@@ -7,7 +7,6 @@ import signal
 import time
 import traceback
 
-import crowsnest
 from crowsnest import logger, logging_helper, utils, watchdog
 from crowsnest.components.crowsnest import Crowsnest
 from crowsnest.components.streamer.streamer import Streamer
