@@ -130,6 +130,12 @@ migrate_crudini() {
     done < <(crudini --get --list "${cfg}")
 }
 
+cleanup_legacy_comments() {
+    local cfg="$1"
+    log_info "Cleaning up legacy RTSP comments..."
+    sed -i '/RTSP Stream URL:/,/^##*$/d' "${cfg}"
+}
+
 CONFIG_PATH=$(find_config) || exit 1
 MIGRATED_TEMP="${CONFIG_PATH}.v5"
 
@@ -141,8 +147,8 @@ fi
 log_info "Found config at: ${CONFIG_PATH}"
 
 backup_config "${CONFIG_PATH}"
-
 migrate_crudini "${CONFIG_PATH}"
+cleanup_legacy_comments "${CONFIG_PATH}"
 
 mv "${CONFIG_PATH}" "${MIGRATED_TEMP}"
 
