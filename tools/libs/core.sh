@@ -47,22 +47,6 @@ create_filestructure() {
     done || return 1
 }
 
-link_main_executable() {
-    local crowsnest_main_bin_path crowsnest_src_bin_path
-    crowsnest_main_bin_path="/usr/local/bin"
-    crowsnest_src_bin_path="${PWD}/crowsnest"
-
-    if [[ -f "${crowsnest_main_bin_path}/crowsnest" ]]; then
-        rm -f "${crowsnest_main_bin_path}/crowsnest"
-    fi
-    if [[ -f "${crowsnest_src_bin_path}" ]]; then
-        ln -sf "${crowsnest_src_bin_path}" "${crowsnest_main_bin_path}"
-    else
-        msg "File ${crowsnest_src_bin_path} does not exist!"
-        return 1
-    fi
-}
-
 install_service_file() {
     local service_file target_dir
     service_file="${PWD}/resources/crowsnest.service"

@@ -92,13 +92,6 @@ main() {
         status_msg "Creating file structure ..." "1"
     fi
 
-
-    if link_main_executable; then
-        status_msg "Link crowsnest to /usr/local/bin ..." "0"
-    else
-        status_msg "Link crowsnest to /usr/local/bin ..." "1"
-    fi
-
     if install_service_file; then
         status_msg "Install service file ..." "0"
     else
