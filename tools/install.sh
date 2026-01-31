@@ -24,6 +24,7 @@ set -Ee
 ## Global Vars
 SRC_DIR="$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd -P)"
 [[ -n "${CROWSNEST_UNATTENDED}" ]] || CROWSNEST_UNATTENDED="0"
+[[ -n "${CROWSNEST_SKIP_REBOOT_PROMPT}" ]] || CROWSNEST_SKIP_REBOOT_PROMPT="0"
 
 ### Crowsnest Dependencies
 # shellcheck disable=SC2034
