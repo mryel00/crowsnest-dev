@@ -44,6 +44,20 @@ update: ## Update crowsnest (fetches and pulls repository changes)
 	@bash -c 'bin/build.sh --reclone'
 	${MAKE} build
 
+upgrade: ## Upgrade crowsnest from v4 to v5
+	@printf "Backup crowsnest.conf and migrate it ...\n"
+	@bash -c 'tools/migrate_crowsnest_conf.sh'
+	@printf "Uninstalling crowsnest v4 ...\n"
+	@yes | bash -c 'tools/uninstall.sh'
+	@printf "Restoring crowsnest.conf ...\n"
+	@bash -c 'tools/migrate_crowsnest_conf.sh --restore'
+	@printf "Updating repository ...\n"
+	@git fetch --all
+	@git switch main
+	@git pull origin main
+	@printf "Installing crowsnest v5 ...\n"
+	@sudo bash -c 'tools/install.sh'
+
 report: ## Generate report.txt
 	@if [ -f ~/report.txt ]; then rm -f ~/report.txt; fi
 	@bash -c 'tools/dev-helper.sh -a >> ~/report.txt'
