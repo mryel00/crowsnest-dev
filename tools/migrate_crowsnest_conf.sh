@@ -120,6 +120,7 @@ migrate_crudini() {
             fi
 
             if val=$(crudini --get "${cfg}" "${section}" "mode" 2>/dev/null); then
+                val=$(echo "$val" | sed 's/[#;].*//' | xargs)
                 if [[ "$val" != "ustreamer" ]] && [[ "$val" != "camera-streamer" ]] && [[ "$val" != "spyglass" ]]; then
                     log_info "Updating invalid mode '$val' to 'ustreamer' in [${section}]"
                     crudini --set "${cfg}" "${section}" "mode" "ustreamer"
