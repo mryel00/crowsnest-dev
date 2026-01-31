@@ -143,7 +143,7 @@ cleanup_legacy_comments() {
     sed -i '/RTSP Stream URL:/,/^##*$/d' "${cfg}"
 }
 
-cleanup_moonraker_conf() {
+cleanup_moonraker_config() {
     local cfg="$1"
     sed -i '/# Crowsnest update_manager entry/d' "${cfg}"
 }
@@ -162,7 +162,7 @@ log_info "Found config at: ${CROWSNEST_CFG_PATH}"
 backup_config "${CROWSNEST_CFG_PATH}" "${MOONRAKER_CFG_PATH}"
 migrate_crudini "${CROWSNEST_CFG_PATH}" "${MOONRAKER_CFG_PATH}"
 cleanup_legacy_comments "${CROWSNEST_CFG_PATH}"
-cleanup_moonraker_confg "${MOONRAKER_CFG_PATH}"
+cleanup_moonraker_config "${MOONRAKER_CFG_PATH}"
 
 mv "${CROWSNEST_CFG_PATH}" "${MIGRATED_TEMP}"
 
