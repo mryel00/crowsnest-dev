@@ -16,7 +16,6 @@ class Crowsnest(Section):
         super().parse_config_section(section)
         self.parameters.update(
             {
-                "log_path": section.get("log_path", None),
                 "log_level": section.getloglevel("log_level", "INFO"),
                 "delete_log": section.getboolean("delete_log", False),
                 "no_proxy": section.getboolean("no_proxy", False),
