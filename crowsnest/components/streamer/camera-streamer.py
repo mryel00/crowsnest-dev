@@ -12,17 +12,6 @@ class Camera_Streamer(Streamer):
     binary_names = ["camera-streamer"]
     binary_paths = ["bin/camera-streamer"]
 
-    def parse_config_section(
-        self, config_section: SectionProxy, *args, **kwargs
-    ) -> None:
-        super().parse_config_section(config_section, *args, **kwargs)
-        self.parameters.update(
-            {
-                "enable_rtsp": config_section.getboolean("enable_rtsp", False),
-                "rtsp_port": config_section.getint("rtsp_port", 8554),
-            }
-        )
-
     async def execute(self, lock: asyncio.Lock) -> asyncio.subprocess.Process:
         if self.parameters["no_proxy"]:
             host = "0.0.0.0"
@@ -65,9 +54,6 @@ class Camera_Streamer(Streamer):
             streamer_args += ["--camera-type=v4l2"]
             if cam.has_mjpg_hw_encoder():
                 streamer_args += ["--camera-format=MJPEG"]
-
-        if self.parameters["enable_rtsp"]:
-            streamer_args += ["--rtsp-port=" + str(self.parameters["rtsp_port"])]
 
         # custom flags
         streamer_args += self.parameters["custom_flags"].split()
