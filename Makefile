@@ -49,14 +49,14 @@ upgrade: ## Upgrade crowsnest from v4 to v5
 	@bash -c 'tools/migrate_crowsnest_conf.sh'
 	@printf "Uninstalling crowsnest v4 ...\n"
 	@yes | bash -c 'tools/uninstall.sh'
-	@printf "Restoring crowsnest.conf ...\n"
-	@bash -c 'tools/migrate_crowsnest_conf.sh --restore'
 	@printf "Updating repository ...\n"
 	@git fetch --all
 	@git switch main
 	@git pull origin main
 	@printf "Installing crowsnest v5 ...\n"
-	@sudo bash -c 'tools/install.sh'
+	@sudo env CROWSNEST_SKIP_REBOOT_PROMPT=1 bash -c 'tools/install.sh'
+	@printf "Restoring migrated crowsnest.conf ...\n"
+	@bash -c 'tools/migrate_crowsnest_conf.sh --restore'
 
 report: ## Generate report.txt
 	@if [ -f ~/report.txt ]; then rm -f ~/report.txt; fi

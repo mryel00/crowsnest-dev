@@ -142,8 +142,7 @@ if [[ "$1" == "--restore" ]]; then
         TARGET_CONFIG="${MIGRATED_BACKUP%.v5}"
 
         log_info "Restoring migrated config from ${MIGRATED_BACKUP} to ${TARGET_CONFIG}"
-        cp "${MIGRATED_BACKUP}" "${TARGET_CONFIG}"
-        rm "${MIGRATED_BACKUP}"
+        mv "${MIGRATED_BACKUP}" "${TARGET_CONFIG}"
         log_info "Restore complete."
         exit 0
     else
@@ -166,6 +165,6 @@ backup_config "${CONFIG_PATH}"
 
 migrate_crudini "${CONFIG_PATH}"
 
-cp "${CONFIG_PATH}" "${MIGRATED_TEMP}"
+mv "${CONFIG_PATH}" "${MIGRATED_TEMP}"
 
 log_info "Migration complete."
