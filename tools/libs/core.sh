@@ -68,7 +68,7 @@ install_env_file() {
     env_target="${CROWSNEST_ENV_PATH}/crowsnest.env"
     sudo -u "${BASE_USER}" cp -f "${env_file}" "${env_target}"
     sed -i "s|%CONFPATH%|${CROWSNEST_CONFIG_PATH}|" "${env_target}"
-    sed -i "s|%USER%|${BASE_USER}|" "${env_target}"
+    sed -i "s|%LOGPATH%|${CROWSNEST_LOG_PATH}|" "${env_target}"
     [[ -f "${env_target}" ]] &&
     grep -q "${CROWSNEST_CONFIG_PATH}" "${env_target}" || return 1
 }
@@ -86,12 +86,9 @@ backup_crowsnest_conf() {
 install_crowsnest_conf() {
     local conf_template
     conf_template="${PWD}/resources/crowsnest.conf"
-    logpath="${CROWSNEST_LOG_PATH}/crowsnest.log"
     backup_crowsnest_conf
     sudo -u "${BASE_USER}" cp -rf "${conf_template}" "${CROWSNEST_CONFIG_PATH}"
-    sed -i "s|%LOGPATH%|${logpath}|g" "${CROWSNEST_CONFIG_PATH}/crowsnest.conf"
-    [[ -f "${CROWSNEST_CONFIG_PATH}/crowsnest.conf" ]] &&
-    grep -q "${logpath}" "${CROWSNEST_CONFIG_PATH}/crowsnest.conf" || return 1
+    [[ -f "${CROWSNEST_CONFIG_PATH}/crowsnest.conf" ]] || return 1
 }
 
 enable_service() {
