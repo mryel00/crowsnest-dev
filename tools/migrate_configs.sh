@@ -145,11 +145,13 @@ cleanup_legacy_comments() {
 
 cleanup_moonraker_config() {
     local cfg="$1"
+    log_info "Cleaning up moonraker.conf entries..."
+    crudini --del "${cfg}" "update_manager crowsnest"
     sed -i '/# Crowsnest update_manager entry/d' "${cfg}"
 }
 
 CROWSNEST_CFG_PATH=$(find_config) || exit 1
-MOONRAKER_CFG_PATH="${CROWSNEST_CFG_PATH%CROWSNEST_CFG_NAME}${MOONRAKER_CFG_NAME}"
+MOONRAKER_CFG_PATH="${CROWSNEST_CFG_PATH%$CROWSNEST_CFG_NAME}${MOONRAKER_CFG_NAME}"
 MIGRATED_TEMP="${CROWSNEST_CFG_PATH}.v5"
 
 if ! command -v crudini >/dev/null 2>&1; then
