@@ -30,8 +30,6 @@ log_error() {
 }
 
 find_config() {
-    local config_path=""
-
     if systemctl cat crowsnest.service >/dev/null 2>&1; then
         local service_content
         service_content=$(systemctl cat crowsnest.service)
@@ -97,8 +95,6 @@ migrate_crudini() {
 
     log_info "Using crudini for migration..."
 
-    sections=$(crudini --get --list "${crowsnest_cfg}")
-
     while IFS= read -r section; do
         if [[ "$section" != "crowsnest" ]] && [[ ! "$section" =~ ^cam\ .* ]]; then
             log_info "Removing unknown section: [${section}]"
@@ -151,7 +147,7 @@ cleanup_moonraker_config() {
 }
 
 CROWSNEST_CFG_PATH=$(find_config) || exit 1
-MOONRAKER_CFG_PATH="${CROWSNEST_CFG_PATH%$CROWSNEST_CFG_NAME}${MOONRAKER_CFG_NAME}"
+MOONRAKER_CFG_PATH="${CROWSNEST_CFG_PATH%"$CROWSNEST_CFG_NAME"}${MOONRAKER_CFG_NAME}"
 MIGRATED_TEMP="${CROWSNEST_CFG_PATH}.v5"
 
 if ! command -v crudini >/dev/null 2>&1; then
