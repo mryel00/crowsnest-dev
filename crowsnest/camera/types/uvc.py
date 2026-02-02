@@ -10,9 +10,10 @@ class UVC(camera.Camera):
         self.path_by_path = None
         self.path_by_id = None
         if path.startswith("/dev/video"):
-            if kwargs.get("other"):
-                self.path_by_path = kwargs["other"][0]
-                self.path_by_id = kwargs["other"][1]
+            other = kwargs.get("other", None)
+            if other:
+                self.path_by_path = other.get("by_path", None)
+                self.path_by_id = other.get("by_id", None)
         else:
             self.path = os.path.realpath(path)
             self.path_by_id = path
@@ -90,15 +91,13 @@ class UVC(camera.Camera):
             return avail_uvc
 
         avail_by_id = get_avail_uvc("/dev/v4l/by-id/")
-        avail_by_path = dict(
-            filter(
-                lambda key_value_pair: "usb" in key_value_pair[1],
-                get_avail_uvc("/dev/v4l/by-path/").items(),
-            )
-        )
         avail_uvc_cameras = {}
-        for dev_path, by_path in avail_by_path.items():
-            avail_uvc_cameras[dev_path] = (by_path, avail_by_id.get(dev_path))
+        for dev_path, by_path in get_avail_uvc("/dev/v4l/by-path/").items():
+            if "usb" in by_path:
+                avail_uvc_cameras[dev_path] = {
+                    "by_path": by_path,
+                    "by_id": avail_by_id.get(dev_path, None),
+                }
         return [
             UVC(dev_path, other=other_paths)
             for dev_path, other_paths in avail_uvc_cameras.items()

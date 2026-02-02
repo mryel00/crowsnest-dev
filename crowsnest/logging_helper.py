@@ -135,7 +135,12 @@ def log_libcam(cam: camera.Libcamera) -> None:
 
 
 def log_uvc_cam(cam: camera.UVC) -> None:
-    logger.log_info_silent(f"{cam.path_by_id} -> {cam.path}")
+    if cam.path_by_id:
+        logger.log_info_silent(f"{cam.path_by_id} -> {cam.path}")
+    elif cam.path_by_path:
+        logger.log_info_silent(f"{cam.path_by_path} -> {cam.path}")
+    else:
+        logger.log_info_silent(f"{cam.path}")
     logger.log_info_silent(f"Supported Formats:")
     log_camera_formats(cam)
     logger.log_info_silent(f"Supported Controls:")
