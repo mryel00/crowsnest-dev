@@ -56,11 +56,16 @@ def parse_qc_of_path(device_path: str, qc: raw.v4l2_query_ext_ctrl) -> dict:
     """
     Parses the query control to an easy to use dictionary
     """
+    fd = None
     try:
-        with open(device_path, "r+") as f:
-            return parse_qc(f.fileno(), qc)
+        fd = os.open(device_path, os.O_RDWR)
+        controls = parse_qc(fd, qc)
+        return controls
     except FileNotFoundError:
         return {}
+    finally:
+        if fd is not None:
+            os.close(fd)
 
 
 def init_device(device_path: str) -> bool:
