@@ -33,6 +33,15 @@ is_dietpi() {
     fi
 }
 
+is_os_release() {
+    if [[ -f /etc/os-release ]] &&
+    grep -cq "${1}" /etc/os-release &> /dev/null; then
+        echo "1"
+    else
+        echo "0"
+    fi
+}
+
 is_raspberry_pi() {
     if [[ -f /proc/device-tree/model ]] &&
     grep -q "Raspberry" /proc/device-tree/model; then
