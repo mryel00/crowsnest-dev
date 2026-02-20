@@ -27,9 +27,9 @@ get_host_arch() {
 install_dependencies() {
     local pkgs="${PKGLIST}"
     if [[ "$(use_pi_specifics)" = "1" ]]; then
-        pkgs+=" ${PKGLIST_PI}"
+        pkgs+=("${PKGLIST_PI[@]}")
     fi
-    apt-get --yes --no-install-recommends install ${pkgs} || return 1
+    apt-get --yes --no-install-recommends install "${pkgs[@]}" || return 1
 }
 
 create_filestructure() {

@@ -35,8 +35,7 @@ fi
 USTREAMER_PATH="bin/ustreamer"
 
 # These are install dependencies for manual building
-# shellcheck disable=SC2034
-PKGLIST_USTREAMER="git build-essential libevent-dev libjpeg-dev libbsd-dev pkg-config"
+PKGLIST_USTREAMER=("git" "build-essential" "libevent-dev" "libjpeg-dev" "libbsd-dev" "pkg-config")
 
 # Paths of repos
 ALL_PATHS=(
@@ -147,7 +146,7 @@ install_apps() {
         msg "We do not support your Distro with the Mainsail apt repository."
         msg "Trying to install ustreamer manually."
         msg "Installing build dependencies ..."
-        apt-get --yes --no-install-recommends install ${PKGLIST_USTREAMER} || return 1
+        apt-get --yes --no-install-recommends install "${PKGLIST_USTREAMER[@]}" || return 1
         msg "Cloning ustreamer repository ..."
         clone_ustreamer
         msg "Building ustreamer ..."
