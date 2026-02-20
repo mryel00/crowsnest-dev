@@ -55,6 +55,7 @@ upgrade: ## Upgrade crowsnest from v4 to v5
 	fi
 	@printf "Uninstalling crowsnest v4 ...\n"
 	@yes | bash -c 'tools/uninstall.sh'
+	@rm -rf bin/ustreamer bin/camera-streamer
 	@printf "Updating repository ...\n"
 	@git fetch --all
 	@git switch v5
