@@ -147,3 +147,10 @@ def resolution_converter(resolution: str) -> tuple[str, str]:
         raise ValueError(
             "Custom Error", f"'{resolution}' is not of format '<width>x<height>'!"
         )
+
+
+def is_pi5() -> bool:
+    model_path = "/proc/device-tree/model"
+    pi5 = grep(model_path, "Raspberry Pi 5")
+    cm5 = grep(model_path, "Raspberry Pi Compute Module 5")
+    return bool(pi5) or bool(cm5)
