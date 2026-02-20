@@ -25,7 +25,7 @@ get_host_arch() {
 }
 
 install_dependencies() {
-    local pkgs="${PKGLIST}"
+    local pkgs=("${PKGLIST[@]}")
     if [[ "$(use_pi_specifics)" = "1" ]]; then
         pkgs+=("${PKGLIST_PI[@]}")
     fi
