@@ -43,10 +43,12 @@ ALL_PATHS=(
 )
 
 APPS=("mainsail-ustreamer" "mainsail-spyglass")
-if [[ "$(use_pi_specifics)" = "1" ]]; then
-    APPS+=("mainsail-camera-streamer-raspi")
-else
-    APPS+=("mainsail-camera-streamer-generic")
+if [[ "$(is_pi5)" = "0" ]]; then
+    if [[ "$(use_pi_specifics)" = "1" ]]; then
+        APPS+=("mainsail-camera-streamer-raspi")
+    else
+        APPS+=("mainsail-camera-streamer-generic")
+    fi
 fi
 
 : "${BASE_USER:=${SUDO_USER:-${USER}}}"
