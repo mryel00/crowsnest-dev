@@ -153,6 +153,18 @@ class Ustreamer(Streamer):
                 f"Value is now: {self.cam.get_current_control_value('focus_absolute')}"
             )
 
+    def _blockyfix(self):
+        """
+        This function is to set bitrate on legacy raspicams.
+        If legacy raspicams set to variable bitrate, they tend to show
+        a "block-like" view after reboots
+        To prevent that blockyfix should apply constant bitrate before start of ustreamer
+        See https://github.com/mainsail-crew/crowsnest/issues/33
+        """
+        self.cam.set_control("video_bitrate_mode", 1)
+        self.cam.set_control("video_bitrate", 15000000)
+        self.log_info("Blockyfix: Setting video_bitrate_mode to constant.")
+
     def _is_device_legacy(self) -> bool:
         return isinstance(self.cam, camera.Legacy)
 
