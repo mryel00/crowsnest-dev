@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 import asyncio
 from configparser import SectionProxy

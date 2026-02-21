@@ -1,4 +1,3 @@
-#!/usr/bin/python3
 
 V4L2_CTRL_MAX_DIMS = 4
 

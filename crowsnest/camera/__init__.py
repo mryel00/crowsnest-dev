@@ -1,5 +1,3 @@
-#!/usr/bin/python3
-
 from . import camera_manager
 from .camera import Camera
 from .types.legacy import Legacy
