@@ -42,13 +42,14 @@ ALL_PATHS=(
     "${USTREAMER_PATH}"
 )
 
-APPS=("mainsail-ustreamer" "mainsail-spyglass")
-if [[ "$(is_pi5)" = "0" ]]; then
-    if [[ "$(use_pi_specifics)" = "1" ]]; then
+APPS=("mainsail-ustreamer")
+if [[ "$(use_pi_specifics)" = "1" ]]; then
+    APPS+=("mainsail-spyglass")
+    if [[ "$(is_pi5)" = "0" ]]; then
         APPS+=("mainsail-camera-streamer-raspi")
-    else
-        APPS+=("mainsail-camera-streamer-generic")
     fi
+else
+    APPS+=("mainsail-camera-streamer-generic")
 fi
 
 : "${BASE_USER:=${SUDO_USER:-${USER}}}"
@@ -156,7 +157,6 @@ install_apps() {
     else
         msg "Install streamer apps ..."
         install_apt_streamer
-        msg "Note: spyglass is supposed to fail on non Raspberry Pi OS systems"
     fi
 }
 
