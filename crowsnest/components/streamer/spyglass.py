@@ -29,7 +29,7 @@ class Spyglass(Streamer):
         res = "x".join(self.parameters["resolution"])
         fps = self.parameters["max_fps"]
         device = self.parameters["device"]
-        self.cam = camera.camera_manager.get_cam_by_path(device)
+        cam = camera.camera_manager.get_cam_by_path(device)
 
         try:
             int(device)
