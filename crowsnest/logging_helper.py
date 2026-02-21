@@ -117,7 +117,7 @@ def log_cams():
 
     if total == 0:
         logger.log_error("No usable Devices Found. Stopping ")
-        sys.exit()
+        sys.exit(1)
 
     logger.log_info(f"Found {total} total available Device(s)")
     if libcamera:
