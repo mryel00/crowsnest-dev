@@ -80,11 +80,10 @@ find_config() {
 backup_config() {
     local extension
     local cfg="$1"
+    local mr_cfg="$2"
     extension="$(date +%Y-%m-%d-%H%M)"
     cp "${cfg}" "${cfg}.${extension}"
-    cfg="${cfg%crowsnest.conf}moonraker.conf"
-    extension="$(date +%Y-%m-%d-%H%M)"
-    cp "${cfg}" "${cfg}.${extension}.bkp"
+    cp "${mr_cfg}" "${mr_cfg}.${extension}.bkp"
 }
 
 migrate_crudini() {
