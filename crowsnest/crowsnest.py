@@ -15,7 +15,7 @@ from crowsnest.components.streamer.streamer import Streamer
 def initial_parse_config(config_path, config):
     try:
         config.read(config_path)
-    except configparser.ParsingError as e:
+    except configparser.Error as e:
         logger.log_multiline(e.message, logger.log_error)
         logger.log_error("Failed to parse config! Exiting...")
         exit(1)
