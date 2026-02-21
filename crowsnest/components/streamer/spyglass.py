@@ -30,6 +30,9 @@ class Spyglass(Streamer):
         fps = self.parameters["max_fps"]
         device = self.parameters["device"]
         cam = camera.camera_manager.get_cam_by_path(device)
+        if cam is None:
+            self.log_warning(f"Device '{device}' not found in discovered cameras.")
+            self.log_warning(f"Make sure the camera is connected and working.")
 
         try:
             int(device)
