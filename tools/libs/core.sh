@@ -40,8 +40,7 @@ create_filestructure() {
             else
                 status_msg "Created ${dir} ..." "1"
             fi
-        fi
-        if [[ -d "${dir}" ]]; then
+        else
             msg "Directory ${dir} already exists ..." "0"
         fi
     done || return 1
