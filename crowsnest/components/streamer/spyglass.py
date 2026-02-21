@@ -24,8 +24,14 @@ class Spyglass(Streamer):
         device = self.parameters["device"]
         self.cam = camera.camera_manager.get_cam_by_path(device)
 
+        try:
+            int(device)
+            device_option = "--camera_num"
+        except ValueError:
+            device_option = "--device"
+
         streamer_args = [
-            "--camera_num=" + device,
+            f"{device_option}=" + device,
             "--bindaddress=" + host,
             "--port=" + str(port),
             "--fps=" + str(fps),
