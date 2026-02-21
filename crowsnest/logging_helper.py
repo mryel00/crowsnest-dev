@@ -154,9 +154,8 @@ def log_uvc_cam(cam: camera.UVC) -> None:
     log_camera_ctrls(cam)
 
 
-def log_legacy_cam(camera_path: str) -> None:
-    cam: camera.UVC = camera.camera_manager.get_cam_by_path(camera_path)
-    logger.log_info(f"Detected 'Raspicam' Device -> {camera_path}")
+def log_legacy_cam(cam: camera.Legacy) -> None:
+    logger.log_info(f"Detected 'Raspicam' Device -> {cam.path}")
     logger.log_info_silent(f"Supported Formats:")
     log_camera_formats(cam)
     logger.log_info_silent(f"Supported Controls:")
