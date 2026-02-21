@@ -43,7 +43,7 @@ def setup_logging(log_path, filemode="a", log_level=logging.INFO):
         mode=filemode,
         encoding="utf-8",
         maxBytes=3 * 1024 * 1024,
-        backupCount=2,
+        backupCount=5,
     )
     filehandler.setFormatter(formatter)
     logger.addHandler(filehandler)
