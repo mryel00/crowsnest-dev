@@ -69,7 +69,7 @@ install_env_file() {
     sed -i "s|%CONFPATH%|${CROWSNEST_CONFIG_PATH}|" "${env_target}"
     sed -i "s|%LOGPATH%|${CROWSNEST_LOG_PATH}|" "${env_target}"
     [[ -f "${env_target}" ]] &&
-    grep -q "${CROWSNEST_CONFIG_PATH}" "${env_target}" || return 1
+    grep -q "${CROWSNEST_CONFIG_PATH}" "${env_target}" && grep -q "${CROWSNEST_LOG_PATH}" "${env_target}" || return 1
 }
 
 backup_crowsnest_conf() {
