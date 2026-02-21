@@ -19,9 +19,10 @@ QUIET = 35
 
 indentation = 6 * " "
 
+logger = logging.getLogger("crowsnest")
+
 
 def setup_logging(log_path, filemode="a", log_level=logging.INFO):
-    global logger
     # Create log directory if it does not exist.
     os.makedirs(os.path.dirname(log_path), exist_ok=True)
 
@@ -30,7 +31,6 @@ def setup_logging(log_path, filemode="a", log_level=logging.INFO):
     logging.addLevelName(DEBUG, "DEBUG")
     logging.addLevelName(QUIET, "QUIET")
 
-    logger = logging.getLogger("crowsnest")
     logger.propagate = False
     formatter = logging.Formatter(
         "[%(asctime)s] %(message)s", datefmt="%d/%m/%y %H:%M:%S"
