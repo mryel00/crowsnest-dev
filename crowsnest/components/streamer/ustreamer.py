@@ -129,6 +129,7 @@ class Ustreamer(Streamer):
         avail_ctrls = self.cam.get_controls_string()
         for ctrl in ctrls:
             c = ctrl.split("=")[0].strip().lower()
+            # TODO: make check more robust
             if c not in avail_ctrls:
                 self.log_quiet(
                     f"Parameter '{ctrl.strip()}' not available for '{self.parameters['device']}'. Skipped.",
