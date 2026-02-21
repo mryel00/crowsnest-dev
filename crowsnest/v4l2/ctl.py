@@ -233,13 +233,13 @@ def get_formats(device_path: str) -> dict:
     """
     try:
         fd = os.open(device_path, os.O_RDWR)
-        fmt = raw.v4l2_fmtdesc()
+        fmt_desc = raw.v4l2_fmtdesc()
         frmsize = raw.v4l2_frmsizeenum()
         frmival = raw.v4l2_frmivalenum()
-        fmt.index = 0
-        fmt.type = constants.V4L2_BUF_TYPE_VIDEO_CAPTURE
+        fmt_desc.index = 0
+        fmt_desc.type = constants.V4L2_BUF_TYPE_VIDEO_CAPTURE
         formats = {}
-        for fmt in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FMT, fmt):
+        for fmt in utils.ioctl_iter(fd, raw.VIDIOC_ENUM_FMT, fmt_desc):
             format_str = f"[{fmt.index}]: '{utils.fcc2s(fmt.pixelformat)}' ({fmt.description.decode()}"
             if fmt.flags:
                 format_str += f", {utils.fmtflags2str(fmt.flags)}"
