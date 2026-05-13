@@ -90,7 +90,7 @@ build_ustreamer() {
 }
 
 install_apt_sources() {
-    local id version_id
+    local id version_id variant apt_url src_ext key_path
 
     id=$(grep '^ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
     version_id=$(grep '^VERSION_ID=' /etc/os-release | cut -d'=' -f2 | cut -d'"' -f2)
@@ -101,17 +101,26 @@ install_apt_sources() {
         id="debian"
     fi
 
+    src_ext="sources"
+    key_path="/etc/apt/keyrings/mainsail.asc"
+
     if [[ "${id}" = "debian" ]] && [[ "${version_id}" = "11" ]]; then
-        curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /etc/apt/trusted.gpg.d/mainsail.gpg > /dev/null
-        curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.list "https://apt.mainsail.xyz/mainsail-${id}-${version_id}-${variant}.list"
+        src_ext="list"
+        key_path="/etc/apt/trusted.gpg.d/mainsail.asc"
+    fi
+
+    apt_url="https://apt.mainsail.xyz"
+    apt_source="/etc/apt/sources.list.d/mainsail.${src_ext}"
+
+    if curl -s --compressed --fail -o "${apt_source}" "${apt_url}/mainsail-${id}-${version_id}-${variant}.${src_ext}" &&
+    curl -s --compressed --fail -o "${key_path}" "${apt_url}/mainsail.gpg.key"; then
         echo "1"
     else
-        if curl -s --compressed --fail -o /etc/apt/sources.list.d/mainsail.sources "https://apt.mainsail.xyz/mainsail-${id}-${version_id}-${variant}.sources"; then
-            curl -s --compressed "https://apt.mainsail.xyz/mainsail.gpg.key" | gpg --dearmor | sudo tee /usr/share/keyrings/mainsail.gpg > /dev/null
-            echo "1"
-        else
-            echo "0"
-        fi
+        rm -rf "${apt_source}" "${key_path}"
+        msg "Warning: Either we do not provide an APT source for your OS or the download of some component failed."
+        msg "Compiling ustreamer locally!"
+        msg "Please check out the docs at https://docs.mainsail.xyz/crowsnest/faq/apt/ for more informations on the APT repository."
+        echo "0"
     fi
 }
 
