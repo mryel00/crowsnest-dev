@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
+## [5.0.6](https://github.com/mainsail-crew/crowsnest/releases/tag/vv5.0.6) - 2026-05-13
+### Refactor
+
+- Refactor apt sources installation ([#341](https://github.com/mainsail-crew/crowsnest/pull/341))
+
 ## [5.0.5](https://github.com/mainsail-crew/crowsnest/releases/tag/v5.0.5) - 2026-04-30
 ### Bug Fixes and Improvements
 
