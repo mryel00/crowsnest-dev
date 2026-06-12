@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
+## [5.0.8](https://github.com/mainsail-crew/crowsnest/releases/tag/v5.0.8) - 2026-06-12
+### Bug Fixes and Improvements
+
+- **v4l2**: Fix v4l2 controls parsing ([#347](https://github.com/mainsail-crew/crowsnest/pull/347))
+
 ## [5.0.7](https://github.com/mainsail-crew/crowsnest/releases/tag/v5.0.7) - 2026-05-20
 ### Bug Fixes and Improvements
 
