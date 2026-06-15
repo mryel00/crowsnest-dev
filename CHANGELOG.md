@@ -2,6 +2,11 @@
 # Changelog
 All notable changes to Crowsnest will be documented in this file.
 
+## [5.0.9](https://github.com/mainsail-crew/crowsnest/releases/tag/v5.0.9) - 2026-06-14
+### Bug Fixes and Improvements
+
+- Fix typing error for Debian Bullseye (python 3.9) ([#348](https://github.com/mainsail-crew/crowsnest/pull/348))
+
 ## [5.0.8](https://github.com/mainsail-crew/crowsnest/releases/tag/v5.0.8) - 2026-06-12
 ### Bug Fixes and Improvements
 
