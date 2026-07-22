@@ -11,7 +11,6 @@ from __future__ import annotations
 
 import os
 from collections.abc import Sequence
-from typing import Optional
 
 from ... import logger, v4l2
 from .. import camera
@@ -34,7 +33,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
 
         cur_sec = ""
         for name, qc in self.query_controls.items():
-            parsed_qc: Optional[dict] = v4l2.ctl.parse_qc_of_path(self.path, qc)
+            parsed_qc: dict | None = v4l2.ctl.parse_qc_of_path(self.path, qc)
 
             if parsed_qc is None:
                 continue
@@ -54,7 +53,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
             for res, fps_list in data.items():
                 message += f"{indent}{res}\n"
                 for fps in fps_list:
-                    message += f"{indent*2}{fps}\n"
+                    message += f"{indent * 2}{fps}\n"
         return message[:-1]
 
     def has_mjpg_hw_encoder(self) -> bool:
@@ -86,7 +85,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
             self.path, self.query_controls[control], value
         )
 
-    def get_current_control_value(self, control: str) -> Optional[int]:
+    def get_current_control_value(self, control: str) -> int | None:
         return v4l2.ctl.get_control_cur_value_with_qc(
             self.path, self.query_controls[control]
         )

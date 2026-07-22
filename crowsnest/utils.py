@@ -65,8 +65,8 @@ async def log_subprocess_output(
 ) -> None:
     line = await stream.readline()
     while line:
-        l = line.decode("utf-8").strip()
-        log_func(l, prefix=line_prefix)
+        stripped_line = line.decode("utf-8").strip()
+        log_func(stripped_line, prefix=line_prefix)
         line = await stream.readline()
 
 
@@ -140,7 +140,7 @@ def get_executable(names: list[str], paths: list[str]) -> Optional[str]:
 
 def grep(path: str, search: str) -> str:
     try:
-        with open(path, "r") as file:
+        with open(path) as file:
             lines = file.readlines()
             for line in lines:
                 if search in line:
