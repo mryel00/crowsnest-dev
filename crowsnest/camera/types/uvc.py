@@ -67,10 +67,8 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
             for control, data in controls.items():
                 line = f"{control} ({data['type']})"
                 line += max(0, 35 - len(line)) * " " + ":"
-                if data["type"] in ("int",):
-                    line += f" min={data['min']} max={data['max']} step={data['step']}"
-                if "default" in data:
-                    line += f" default={data['default']}"
+                keys = ("min", "max", "step", "default")
+                line += "".join(f" {k}={data[k]}" for k in keys if k in data)
                 line += f" value={self.get_current_control_value(control)}"
                 if "flags" in data:
                     line += f" flags={data['flags']}"
@@ -86,7 +84,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
             self.path, self.query_controls[control], value
         )
 
-    def get_current_control_value(self, control: str) -> int | None:
+    def get_current_control_value(self, control: str) -> str | None:
         return v4l2.ctl.get_control_cur_value_with_qc(
             self.path, self.query_controls[control]
         )
