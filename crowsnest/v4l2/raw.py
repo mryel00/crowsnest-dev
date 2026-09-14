@@ -91,7 +91,7 @@ class v4l2_ext_control(ctypes.Structure):
             ("p_u32", ctypes.POINTER(ctypes.c_uint32)),
             ("p_s32", ctypes.POINTER(ctypes.c_int32)),
             ("p_s64", ctypes.POINTER(ctypes.c_int64)),
-            ("ptr", ctypes.POINTER(ctypes.c_void_p)),
+            ("ptr", ctypes.c_void_p),
             ("p_rect", ctypes.POINTER(v4l2_rect)),
         ]
 
