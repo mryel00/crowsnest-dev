@@ -252,21 +252,20 @@ def get_control_cur_value_with_qc(
         if fd is not None:
             os.close(fd)
 
-    match qc.type:
-        case constants.V4L2_CTRL_TYPE_STRING:
-            if payload_buffer is None:
-                return ""
-            raw_bytes = bytes(payload_buffer)
-            return raw_bytes.decode("utf-8", errors="ignore").rstrip("\x00")
-        case constants.V4L2_CTRL_TYPE_RECT:
-            if payload_buffer is None:
-                return ""
-            rect = ctypes.cast(payload_buffer, ctypes.POINTER(raw.v4l2_rect)).contents
-            return f"({rect.left},{rect.top})/{rect.width}x{rect.height}"
-        case constants.V4L2_CTRL_TYPE_BITMASK:
-            return utils.int_to_hex_string(ctrl.value)
-        case _:
-            return f"{ctrl.value}"
+    if qc.type == constants.V4L2_CTRL_TYPE_STRING:
+        if payload_buffer is None:
+            return ""
+        raw_bytes = bytes(payload_buffer)
+        return raw_bytes.decode("utf-8", errors="ignore").rstrip("\x00")
+    elif qc.type == constants.V4L2_CTRL_TYPE_RECT:
+        if payload_buffer is None:
+            return ""
+        rect = ctypes.cast(payload_buffer, ctypes.POINTER(raw.v4l2_rect)).contents
+        return f"({rect.left},{rect.top})/{rect.width}x{rect.height}"
+    elif qc.type == constants.V4L2_CTRL_TYPE_BITMASK:
+        return utils.int_to_hex_string(ctrl.value)
+    else:
+        return f"{ctrl.value}"
 
 
 def set_control(device_path: str, control: str, value: int) -> bool:
