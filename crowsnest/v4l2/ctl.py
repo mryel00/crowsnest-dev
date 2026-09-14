@@ -19,6 +19,24 @@ from . import constants, raw, utils
 dev_ctls: dict[str, dict[str, dict[str, raw.v4l2_query_ext_ctrl | dict | None]]] = {}
 
 
+def parse_qc_menu(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict:
+    controls_menu = {}
+    for menu in utils.ioctl_iter(
+        fd,
+        raw.VIDIOC_QUERYMENU,
+        raw.v4l2_querymenu(id=qc.id),
+        qc.minimum,
+        qc.maximum + 1,
+        qc.step,
+        True,
+    ):
+        if qc.type == constants.V4L2_CTRL_TYPE_MENU:
+            controls_menu[menu.index] = menu.name.decode()
+        else:
+            controls_menu[menu.index] = menu.value
+    return controls_menu
+
+
 def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict | None:
     """
     Parses the query control to an easy to use dictionary
@@ -58,20 +76,7 @@ def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict | None:
         constants.V4L2_CTRL_TYPE_MENU,
         constants.V4L2_CTRL_TYPE_INTEGER_MENU,
     ):
-        controls["menu"] = {}
-        for menu in utils.ioctl_iter(
-            fd,
-            raw.VIDIOC_QUERYMENU,
-            raw.v4l2_querymenu(id=qc.id),
-            qc.minimum,
-            qc.maximum + 1,
-            qc.step,
-            True,
-        ):
-            if qc.type == constants.V4L2_CTRL_TYPE_MENU:
-                controls["menu"][menu.index] = menu.name.decode()
-            else:
-                controls["menu"][menu.index] = menu.value
+        controls["menu"] = parse_qc_menu(fd, qc)
 
     if qc.type == constants.V4L2_CTRL_TYPE_BITMASK:
         controls["max"] = utils.int_to_hex_string(qc.maximum)
