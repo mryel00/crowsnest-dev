@@ -72,7 +72,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
                 message += f"{section}:\n"
             for control, data in controls.items():
                 line = f"{control} ({data['type']})"
-                line += f"{line:<{max_len}}" + " :"
+                line = f"{line:<{max_len}}" + " :"
                 line += "".join(f" {k}={data[k]}" for k in keys if k in data)
                 line += f" value={self.get_current_control_value(control)}"
                 if "flags" in data:
