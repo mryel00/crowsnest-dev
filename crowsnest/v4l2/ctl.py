@@ -57,7 +57,10 @@ def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict | None:
         controls["min"] = qc.minimum
         controls["max"] = qc.maximum
 
-    if qc.type == constants.V4L2_CTRL_TYPE_INTEGER:
+    if qc.type in (
+        constants.V4L2_CTRL_TYPE_INTEGER,
+        constants.V4L2_CTRL_TYPE_STRING,
+    ):
         controls["step"] = qc.step
 
     if qc.type in (
@@ -65,7 +68,6 @@ def parse_qc(fd: int, qc: raw.v4l2_query_ext_ctrl) -> dict | None:
         constants.V4L2_CTRL_TYPE_MENU,
         constants.V4L2_CTRL_TYPE_INTEGER_MENU,
         constants.V4L2_CTRL_TYPE_BOOLEAN,
-        constants.V4L2_CTRL_TYPE_STRING,
     ):
         controls["default"] = qc.default_value
 
