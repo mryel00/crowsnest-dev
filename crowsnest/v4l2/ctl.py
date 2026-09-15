@@ -215,7 +215,7 @@ def get_camera_capabilities(device_path: str) -> dict:
             os.close(fd)
 
 
-def get_control_cur_value(device_path: str, control: str) -> str | None:
+def get_control_cur_value(device_path: str, control: str) -> int | str | None:
     """
     Get the current value of a control of a given device
     """
