@@ -228,7 +228,7 @@ def get_control_cur_value(device_path: str, control: str) -> str | None:
 
 def get_control_cur_value_with_qc(
     device_path: str, qc: raw.v4l2_query_ext_ctrl
-) -> str | None:
+) -> int | str | None:
     """
     Get the current value of a control of a given device
     """
@@ -272,7 +272,7 @@ def get_control_cur_value_with_qc(
     elif qc.type == constants.V4L2_CTRL_TYPE_BITMASK:
         return utils.int_to_hex_string(ctrl.value)
     else:
-        return f"{ctrl.value}"
+        return ctrl.value
 
 
 def set_control(device_path: str, control: str, value: int) -> bool:

@@ -84,7 +84,7 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
             self.path, self.query_controls[control], value
         )
 
-    def get_current_control_value(self, control: str) -> str | None:
+    def get_current_control_value(self, control: str) -> int | str | None:
         return v4l2.ctl.get_control_cur_value_with_qc(
             self.path, self.query_controls[control]
         )
