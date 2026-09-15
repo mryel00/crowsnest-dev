@@ -61,13 +61,18 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
 
     def get_controls_string(self) -> str:
         message = ""
+        keys = ("min", "max", "step", "default")
+        max_len = max(
+            len(f"{c} ({d['type']})")
+            for controls in self.control_values.values()
+            for c, d in controls.items()
+        )
         for section, controls in self.control_values.items():
             if section != "":
                 message += f"{section}:\n"
             for control, data in controls.items():
                 line = f"{control} ({data['type']})"
-                line += max(0, 35 - len(line)) * " " + ":"
-                keys = ("min", "max", "step", "default")
+                line += f"{line:<{max_len}}" + " :"
                 line += "".join(f" {k}={data[k]}" for k in keys if k in data)
                 line += f" value={self.get_current_control_value(control)}"
                 if "flags" in data:
