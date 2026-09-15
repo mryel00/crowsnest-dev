@@ -63,9 +63,12 @@ class UVC(camera.Camera[dict[str, dict[str, list[str]]]]):
         message = ""
         keys = ("min", "max", "step", "default")
         max_len = max(
-            len(f"{c} ({d['type']})")
-            for controls in self.control_values.values()
-            for c, d in controls.items()
+            (
+                len(f"{c} ({d['type']})")
+                for controls in self.control_values.values()
+                for c, d in controls.items()
+            ),
+            default=0,
         )
         for section, controls in self.control_values.items():
             if section != "":
